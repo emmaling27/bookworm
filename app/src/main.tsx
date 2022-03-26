@@ -12,8 +12,8 @@ ReactDOM.render(
   <StrictMode>
     <Auth0Provider
       // domain and clientId come from your Auth0 app dashboard
-      domain="dev-q61vr-38.us.auth0.com"
-      clientId="FOwYxKlTOxMqFUuBJU7pW1n6suEydExl"
+      domain="dev-pz-qwrna.us.auth0.com"
+      clientId="9E9Zg1m8Pi4AleweJPRDrR4iTLK9xWOu"
       redirectUri={window.location.origin}
       // allows auth0 to cache the authentication state locally
       cacheLocation="localstorage"
