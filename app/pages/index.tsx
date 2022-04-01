@@ -1,6 +1,6 @@
 import { useState, FormEvent } from "react";
-import { Id } from "@convex-dev/react";
-import { Message } from "./common";
+import { ConvexProvider, Id } from "@convex-dev/react";
+import { Message, convex } from "../src/common";
 import { useMutation, useQuery } from "../convex/_generated";
 
 const randomName = "User " + Math.floor(Math.random() * 10000);
@@ -51,7 +51,7 @@ function ChatBox(props: { channelId: Id }) {
       >
         <input
           value={newMessageText}
-          onChange={event => setNewMessageText(event.target.value)}
+          onChange={(event) => setNewMessageText(event.target.value)}
           className="form-control w-50"
           placeholder="Write a message…"
         />
@@ -65,11 +65,11 @@ function ChatBox(props: { channelId: Id }) {
     </div>
   );
 }
-
-export default function App() {
+function App() {
   // Dynamically update `channels` in response to the output of
   // `listChannels.ts`.
   const channels = useQuery("listChannels") || [];
+  console.log(channels);
 
   // Records the Convex document ID for the currently selected channel.
   const [channelId, setChannelId] = useState<Id>();
@@ -93,7 +93,6 @@ export default function App() {
       <p className="text-center">
         <span className="badge bg-dark">{randomName}</span>
       </p>
-
       <div className="main-content">
         <div className="channel-box">
           <div className="list-group shadow-sm my-3">
@@ -117,7 +116,7 @@ export default function App() {
           >
             <input
               value={newChannelName}
-              onChange={event => setNewChannelName(event.target.value)}
+              onChange={(event) => setNewChannelName(event.target.value)}
               className="form-control w-50"
               placeholder="Add a channel..."
             />
@@ -131,6 +130,16 @@ export default function App() {
         </div>
         {channelId ? <ChatBox channelId={channelId} /> : null}
       </div>
+    </main>
+  );
+}
+
+export default function Home() {
+  return (
+    <main>
+      <ConvexProvider client={convex}>
+        <App />
+      </ConvexProvider>
     </main>
   );
 }
