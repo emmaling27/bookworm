@@ -1,8 +1,9 @@
-import { useState, FormEvent, useEffect } from "react";
+import { useState, FormEvent } from "react";
 import { Id } from "@convex-dev/react";
 import { Message } from "./common";
-import { useAuth0 } from "@auth0/auth0-react";
-import { useMutation, useQuery, useConvex } from "../convex/_generated";
+import { useMutation, useQuery } from "../convex/_generated";
+
+const randomName = "User " + Math.floor(Math.random() * 10000);
 
 // Render a chat message.
 function MessageView(props: { message: Message }) {
@@ -26,7 +27,7 @@ function ChatBox(props: { channelId: Id }) {
   async function handleSendMessage(event: FormEvent) {
     event.preventDefault();
     setNewMessageText(""); // reset text entry box
-    await sendMessage(props.channelId, newMessageText);
+    await sendMessage(props.channelId, newMessageText, randomName);
   }
 
   return (
@@ -50,7 +51,7 @@ function ChatBox(props: { channelId: Id }) {
       >
         <input
           value={newMessageText}
-          onChange={(event) => setNewMessageText(event.target.value)}
+          onChange={event => setNewMessageText(event.target.value)}
           className="form-control w-50"
           placeholder="Write a message…"
         />
@@ -65,94 +66,34 @@ function ChatBox(props: { channelId: Id }) {
   );
 }
 
-function LoginLogout() {
-  let { isAuthenticated, isLoading, loginWithRedirect, logout, user } =
-    useAuth0();
-  if (isLoading) {
-    return <button className="btn btn-primary">Loading...</button>;
-  }
-  if (isAuthenticated) {
-    return (
-      <div>
-        {/* We know that Auth0 provides the user's name, but another provider
-        might not. */}
-        <p>Logged in as {user!.name}</p>
-        <button
-          className="btn btn-primary"
-          onClick={() => logout({ returnTo: window.location.origin })}
-        >
-          Log out
-        </button>
-      </div>
-    );
-  } else {
-    return (
-      <button className="btn btn-primary" onClick={loginWithRedirect}>
-        Log in
-      </button>
-    );
-  }
-}
-
 export default function App() {
-  let { isAuthenticated, isLoading, getIdTokenClaims } = useAuth0();
-  const [userId, setUserId] = useState<Id | null>(null);
-  const convex = useConvex();
-  const storeUser = useMutation("storeUser");
-  const addChannel = useMutation("addChannel");
-  // Pass the ID token to the Convex client when logged in, and clear it when logged out.
-  // After setting the ID token, call the `storeUser` mutation function to store
-  // the current user in the `users` table and return the `Id` value.
-  useEffect(() => {
-    if (isLoading) {
-      return;
-    }
-    if (isAuthenticated) {
-      getIdTokenClaims().then(async (claims) => {
-        // Get the raw ID token from the claims.
-        let token = claims!.__raw;
-        // Pass it to the Convex client.
-        convex.setAuth(token);
-        // Store the user in the database.
-        // Recall that `storeUser` gets the user information via the `auth`
-        // object on the server. You don't need to pass anything manually here.
-        let id = await storeUser();
-        setUserId(id);
-      });
-    } else {
-      // Tell the Convex client to clear all authentication state.
-      convex.clearAuth();
-      setUserId(null);
-    }
-  }, [isAuthenticated, isLoading, getIdTokenClaims, convex, storeUser]);
-
   // Dynamically update `channels` in response to the output of
   // `listChannels.ts`.
   const channels = useQuery("listChannels") || [];
 
   // Records the Convex document ID for the currently selected channel.
-  const [channelId, setChannelId] = useState<Id | null>(null);
+  const [channelId, setChannelId] = useState<Id>();
 
   // Run `addChannel.ts` as a mutation to create a new channel when
   // `handleAddChannel` is triggered.
   const [newChannelName, setNewChannelName] = useState("");
 
+  const addChannel = useMutation("addChannel");
+
   async function handleAddChannel(event: FormEvent) {
     event.preventDefault();
     setNewChannelName("");
-    let channel = await addChannel(newChannelName);
-    setChannelId(channel._id);
+    let id = await addChannel(newChannelName);
+    setChannelId(id);
   }
 
   return (
     <main className="py-4">
       <h1 className="text-center">Convex Chat</h1>
-      <div className="text-center">
-        <span>
-          <LoginLogout />
-        </span>
-      </div>
-      <br />
+      <p className="text-center">
+        <span className="badge bg-dark">{randomName}</span>
+      </p>
+
       <div className="main-content">
         <div className="channel-box">
           <div className="list-group shadow-sm my-3">
@@ -176,16 +117,15 @@ export default function App() {
           >
             <input
               value={newChannelName}
-              onChange={(event) => setNewChannelName(event.target.value)}
+              onChange={event => setNewChannelName(event.target.value)}
               className="form-control w-50"
               placeholder="Add a channel..."
-              disabled={userId === null}
             />
             <input
               type="submit"
               value="Add"
               className="ms-2 btn btn-primary"
-              disabled={!newChannelName || userId === null}
+              disabled={!newChannelName}
             />
           </form>
         </div>

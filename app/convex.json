@@ -1,11 +1,6 @@
 {
-  "authInfo": [
-    {
-      "domain": "https://dev-pz-qwrna.us.auth0.com",
-      "applicationID": "9E9Zg1m8Pi4AleweJPRDrR4iTLK9xWOu"
-    }
-  ],
+  "authInfo": [],
   "functions": "convex/",
-  "instanceName": "stoic-skunk-603",
-  "origin": "https://stoic-skunk-603.convex.cloud"
+  "instanceName": "valuable-salmon-586",
+  "origin": "https://valuable-salmon-586.convex.cloud"
 }

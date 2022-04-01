@@ -1,8 +1,6 @@
-# 3-users-and-auth
+# 2-filters-and-references
 
-This example integrates an authentication provider (Auth0) with the chat demo
-from the previous example,
-[`2-filters-and-references`](https://github.com/get-convex/convex-demos/tree/main/2-filters-and-references).
+This example uses the Convex SDK to build a multi-channel real-time chat app.
 
 The project is built with [React](https://reactjs.org/) and
 [TypeScript](https://www.typescriptlang.org/), bundled using
@@ -11,9 +9,8 @@ origin specified in `convex.json` using the JavaScript SDK.
 
 ## Documentation
 
-This directory serves as the end state for the
-[Users and Authentication](https://docs.convex.dev/getting-started/basics/users-and-authentication)
-tutorial.
+This directory serves as the basis for the
+[Filters and References tutorial](https://docs.convex.dev/getting-started/basics/filters-and-references).
 
 ## Running
 

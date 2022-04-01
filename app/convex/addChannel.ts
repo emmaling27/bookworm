@@ -1,11 +1,6 @@
-import { dbWriter, auth } from "@convex-dev/server";
-import { Channel } from "../src/common";
+import { Id, mutation } from "@convex-dev/server";
 
 // Create a new chat channel.
-export default async function addChannel(name: string): Promise<Channel> {
-  let identity = await auth.getUserIdentity();
-  if (!identity) {
-    throw new Error("Unauthenticated call to addChannel");
-  }
-  return await dbWriter.insert("channels", { name });
-}
+export default mutation(({ db }, name: string): Id => {
+  return db.insert("channels", { name });
+});
