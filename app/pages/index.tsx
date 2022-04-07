@@ -2,6 +2,7 @@ import { useState, FormEvent } from "react";
 import { ConvexProvider, Id } from "@convex-dev/react";
 import { Message, convex } from "../src/common";
 import { useMutation, useQuery } from "../convex/_generated";
+import Link from 'next/link';
 
 const randomName = "User " + Math.floor(Math.random() * 10000);
 
@@ -87,6 +88,15 @@ function App() {
     setChannelId(id);
   }
 
+  const [newVoteName, setNewVoteName] = useState("");
+
+  const startVote = useMutation("addVote");
+  async function handleStartVote(event: FormEvent) {
+    event.preventDefault();
+    setNewVoteName("");
+    let id = await startVote(newVoteName);
+  }
+
   return (
     <main className="py-4">
       <h1 className="text-center">Convex Chat</h1>
@@ -110,22 +120,25 @@ function App() {
               </a>
             ))}
           </div>
+
           <form
-            onSubmit={handleAddChannel}
+            onSubmit={handleStartVote}
             className="d-flex justify-content-center"
           >
             <input
-              value={newChannelName}
-              onChange={(event) => setNewChannelName(event.target.value)}
+              value={newVoteName}
+              onChange={(event) => setNewVoteName(event.target.value)}
               className="form-control w-50"
-              placeholder="Add a channel..."
+              placeholder="Start a vote..."
             />
+            <Link href="vote">
             <input
               type="submit"
-              value="Add"
+              value="Start"
               className="ms-2 btn btn-primary"
-              disabled={!newChannelName}
+              disabled={!newVoteName}
             />
+            </Link>
           </form>
         </div>
         {channelId ? <ChatBox channelId={channelId} /> : null}
