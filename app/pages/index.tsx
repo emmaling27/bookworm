@@ -3,7 +3,7 @@ import { ConvexProvider, Id } from "@convex-dev/react";
 import { Message, convex } from "../src/common";
 import { useMutation, useQuery } from "../convex/_generated";
 import Link from 'next/link';
-
+import { useRouter } from 'next/router'
 const randomName = "User " + Math.floor(Math.random() * 10000);
 
 // Render a chat message.
@@ -67,6 +67,7 @@ function ChatBox(props: { channelId: Id }) {
   );
 }
 function App() {
+  let router = useRouter();
   // Dynamically update `channels` in response to the output of
   // `listChannels.ts`.
   const channels = useQuery("listChannels") || [];
@@ -75,18 +76,8 @@ function App() {
   // Records the Convex document ID for the currently selected channel.
   const [channelId, setChannelId] = useState<Id>();
 
-  // Run `addChannel.ts` as a mutation to create a new channel when
-  // `handleAddChannel` is triggered.
-  const [newChannelName, setNewChannelName] = useState("");
-
-  const addChannel = useMutation("addChannel");
-
-  async function handleAddChannel(event: FormEvent) {
-    event.preventDefault();
-    setNewChannelName("");
-    let id = await addChannel(newChannelName);
-    setChannelId(id);
-  }
+  // Run `addVote.ts` as a mutation to create a new channel when
+  // `handleAddVote` is triggered.
 
   const [newVoteName, setNewVoteName] = useState("");
 
@@ -95,6 +86,8 @@ function App() {
     event.preventDefault();
     setNewVoteName("");
     let id = await startVote(newVoteName);
+    let url = `vote/${encodeURIComponent(id.toString())}`;
+    router.push(url);
   }
 
   return (
@@ -131,14 +124,12 @@ function App() {
               className="form-control w-50"
               placeholder="Start a vote..."
             />
-            <Link href="vote">
             <input
               type="submit"
               value="Start"
               className="ms-2 btn btn-primary"
               disabled={!newVoteName}
             />
-            </Link>
           </form>
         </div>
         {channelId ? <ChatBox channelId={channelId} /> : null}
