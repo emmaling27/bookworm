@@ -2,7 +2,6 @@ import { useState, FormEvent } from "react";
 import { ConvexProvider, Id } from "@convex-dev/react";
 import { Message, convex } from "../src/common";
 import { useMutation, useQuery } from "../convex/_generated";
-import Link from 'next/link';
 import { useRouter } from 'next/router'
 const randomName = "User " + Math.floor(Math.random() * 10000);
 
