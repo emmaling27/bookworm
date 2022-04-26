@@ -1,8 +1,9 @@
 import { useState, FormEvent } from "react";
-import { ConvexProvider, Id } from "@convex-dev/react";
+import { ConvexProvider } from "convex-dev/react";
+import { Id } from "convex-dev/values";
 import { Message, convex } from "../src/common";
 import { useMutation, useQuery } from "../convex/_generated";
-import { useRouter } from 'next/router'
+import { useRouter } from "next/router";
 const randomName = "User " + Math.floor(Math.random() * 10000);
 
 // Render a chat message.

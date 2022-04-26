@@ -1,4 +1,5 @@
-import { ConvexProvider, Id } from "@convex-dev/react";
+import { ConvexProvider } from "convex-dev/react";
+import { Id } from "convex-dev/values";
 import router, { useRouter } from "next/router";
 import { FormEvent, useState } from "react";
 import { useMutation, useQuery } from "../../convex/_generated";

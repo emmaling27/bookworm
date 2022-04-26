@@ -1,4 +1,5 @@
-import { mutation, Id } from "@convex-dev/server";
+import { mutation } from "convex-dev/server";
+import { Id } from "convex-dev/values";
 
 // Nominate a book for a vote
 // TODO: once we have auth, put name in here
