@@ -1,9 +1,11 @@
-import { useState, FormEvent } from "react";
+import { useState, FormEvent, useEffect } from "react";
 import { ConvexProvider } from "convex-dev/react";
 import { Id } from "convex-dev/values";
 import { Message, convex } from "../src/common";
-import { useMutation, useQuery } from "../convex/_generated";
+import { useConvex, useMutation, useQuery } from "../convex/_generated";
 import { useRouter } from "next/router";
+import { useAuth0 } from "@auth0/auth0-react";
+import { LoginLogout } from "./_app";
 const randomName = "User " + Math.floor(Math.random() * 10000);
 
 // Render a chat message.
@@ -67,11 +69,23 @@ function ChatBox(props: { channelId: Id }) {
   );
 }
 function App() {
+  // Check authentication
+  // TODO make this a helper since we'll probably need it everywhere
+  let { isAuthenticated, isLoading, getIdTokenClaims, loginWithRedirect } =
+    useAuth0();
+  const [userId, setUserId] = useState<Id | null>(null);
+  const [userName, setUserName] = useState<String | null>(null);
+  const convex = useConvex();
+  const storeUser = useMutation("storeUser");
+  const user = useQuery("getUser", userId);
+  // Pass the ID token to the Convex client when logged in, and clear it when logged out.
+  // After setting the ID token, call the `storeUser` mutation function to store
+  // the current user in the `users` table and return the `Id` value.
+
   let router = useRouter();
   // Dynamically update `channels` in response to the output of
   // `listChannels.ts`.
   const channels = useQuery("listChannels") || [];
-  console.log(channels);
 
   // Records the Convex document ID for the currently selected channel.
   const [channelId, setChannelId] = useState<Id>();
@@ -89,12 +103,57 @@ function App() {
     let url = `vote/${encodeURIComponent(id.toString())}`;
     router.push(url);
   }
+  useEffect(() => {
+    if (isLoading) {
+      return;
+    }
+    if (isAuthenticated) {
+      getIdTokenClaims().then(async (claims) => {
+        // Get the raw ID token from the claims.
+        let token = claims!.__raw;
+        // Pass it to the Convex client.
+        convex.setAuth(token);
+        // Store the user in the database.
+        // Recall that `storeUser` gets the user information via the `auth`
+        // object on the server. You don't need to pass anything manually here.
+        let id = await storeUser();
+        setUserId(id);
+        setUserName(user.name);
+        console.log("we are authenticated");
+      });
+    } else {
+      // Tell the Convex client to clear all authentication state.
+      convex.clearAuth();
+      setUserId(null);
+    }
+  }, [isAuthenticated, isLoading, getIdTokenClaims, convex, storeUser]);
+  if (!isAuthenticated || isLoading) {
+    return LoginLogout();
+  } else if (isAuthenticated) {
+    getIdTokenClaims().then(async (claims) => {
+      // Get the raw ID token from the claims.
+      let token = claims!.__raw;
+      // Pass it to the Convex client.
+      convex.setAuth(token);
+      // Store the user in the database.
+      // Recall that `storeUser` gets the user information via the `auth`
+      // object on the server. You don't need to pass anything manually here.
+      let id = await storeUser();
+      setUserId(id);
+      console.log("we are authenticated as ", id);
+    });
+  } else {
+    // Tell the Convex client to clear all authentication state.
+    convex.clearAuth();
+    setUserId(null);
+    return LoginLogout();
+  }
 
   return (
     <main className="py-4">
       <h1 className="text-center">Convex Chat</h1>
       <p className="text-center">
-        <span className="badge bg-dark">{randomName}</span>
+        <span className="badge bg-dark">Logged in as {userName}</span>
       </p>
       <div className="main-content">
         <div className="channel-box">

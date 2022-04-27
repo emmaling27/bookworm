@@ -1,5 +1,10 @@
 {
-  "authInfo": [],
+  "authInfo": [
+    {
+      "domain": "https://dev-pz-qwrna.us.auth0.com",
+      "applicationID": "9E9Zg1m8Pi4AleweJPRDrR4iTLK9xWOu"
+    }
+  ],
   "functions": "convex/",
   "instanceName": "valuable-salmon-586",
   "origin": "https://valuable-salmon-586.convex.cloud"

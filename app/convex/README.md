@@ -6,7 +6,7 @@ A query function (how you read data) looks like this:
 
 ```
 // getCounter.ts
-import { query } from "@convex-dev/server";
+import { query } from "convex-dev/server";
 
 export default query(async ({ db }): Promise<number> => {
   let counterDoc = await db.table("counter_table").first();
@@ -22,7 +22,7 @@ A mutation function (how you write data) looks like this:
 
 ```
 // incrementCounter.ts
-import { mutation } from "@convex-dev/server";
+import { mutation } from "convex-dev/server";
 
 export default mutation(({ db }, increment: number) => {
   let counterDoc = await db.table("counter_table").first();

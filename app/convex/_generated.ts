@@ -4,11 +4,13 @@
 // To regenerate, run `convex codegen`.
 import type addChannel from "./addChannel";
 import type addVote from "./addVote";
+import type getUser from "./getUser";
 import type listChannels from "./listChannels";
 import type listMessages from "./listMessages";
 import type listNominations from "./listNominations";
 import type nominate from "./nominate";
 import type sendMessage from "./sendMessage";
+import type storeUser from "./storeUser";
 
 // This jumpstarts TypeScript completion of the convex-dev/values entry point.
 import type { Id } from "convex-dev/values";
@@ -39,6 +41,7 @@ type ClientQuery<F extends (first: QueryCtx, ...args: any) => any> = (
  */
 export type ConvexAPI = {
   queries: {
+    getUser: ClientQuery<typeof getUser>;
     listChannels: ClientQuery<typeof listChannels>;
     listMessages: ClientQuery<typeof listMessages>;
     listNominations: ClientQuery<typeof listNominations>;
@@ -48,6 +51,7 @@ export type ConvexAPI = {
     addVote: ClientMutation<typeof addVote>;
     nominate: ClientMutation<typeof nominate>;
     sendMessage: ClientMutation<typeof sendMessage>;
+    storeUser: ClientMutation<typeof storeUser>;
   };
 };
 
