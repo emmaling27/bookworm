@@ -4,13 +4,10 @@ import router, { useRouter } from "next/router";
 import { FormEvent, useEffect, useState } from "react";
 import { useConvex, useMutation, useQuery } from "../../convex/_generated";
 
-function NominationList() {
-  const router = useRouter();
-  const id = router.query.id;
+function NominationList(props: { vote: Id }) {
   let listNominations = [];
-  if (typeof id == "string") {
-    listNominations = useQuery("listNominations", Id.fromString(id)) || [];
-  }
+  listNominations = useQuery("listNominations", props.vote) || [];
+
   return (
     <div>
       <h1>Nominations</h1>
@@ -27,7 +24,7 @@ function NominationList() {
   );
 }
 
-function NominateBox(props: { userId }) {
+function NominateBox(props: { userId: Id }) {
   const [nomination, setNomination] = useState("");
   const nominate = useMutation("nominate");
 
@@ -92,13 +89,21 @@ export default function NominatePage() {
       setUserId(null);
     }
   }, [isAuthenticated, isLoading, getIdTokenClaims, convex, storeUser, userId]);
-  return (
-    <main>
-      <NominationList />
-      <div>
-        What book would you like to nominate?
-        <NominateBox userId={userId} />
-      </div>
-    </main>
-  );
+
+  const router = useRouter();
+  const id = router.query.id;
+  if (typeof id == "string") {
+    const vote = Id.fromString(id);
+    return (
+      <main>
+        <NominationList vote={vote}/>
+        <div>
+          What book would you like to nominate?
+          <NominateBox userId={userId} />
+        </div>
+      </main>
+    );
+  } else {
+    return <main>There was an error</main>;
+  }
 }
