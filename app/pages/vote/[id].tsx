@@ -1,10 +1,8 @@
 import { useAuth0 } from "@auth0/auth0-react";
-import { ConvexProvider } from "convex-dev/react";
 import { Id } from "convex-dev/values";
 import router, { useRouter } from "next/router";
 import { FormEvent, useEffect, useState } from "react";
 import { useConvex, useMutation, useQuery } from "../../convex/_generated";
-import { convex } from "../../src/common";
 
 function NominationList() {
   const router = useRouter();
@@ -19,7 +17,7 @@ function NominationList() {
       <ul>
         {" "}
         {listNominations.map((nomination) => (
-          <li>
+          <li key={nomination._id}>
             {nomination.book} ({nomination.nominator}) with {nomination.votes}{" "}
             votes
           </li>
@@ -38,6 +36,7 @@ function NominateBox(props: { userId }) {
     // update client state?
     // search for book (add later)
     // put the book in
+    setNomination("");
     const id = router.query.id;
     if (typeof id == "string") {
       const voteId = Id.fromString(id);
