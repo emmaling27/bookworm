@@ -5,6 +5,10 @@ import { convex } from "../src/common";
 import { useConvex, useMutation, useQuery } from "../convex/_generated";
 import { useRouter } from "next/router";
 import { useAuth0 } from "@auth0/auth0-react";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
+toast.configure();
 
 function StartVote(props: { userId: Id }) {
   if (!props.userId) {
@@ -70,9 +74,14 @@ function ListGroups(props: { userId }) {
   } else {
     async function handleCreateGroup(event: FormEvent) {
       event.preventDefault();
-      setNewGroupName("");
-      setNewGroupDescription("");
-      await addGroup(newGroupName, newGroupDescription, user._id);
+      addGroup(newGroupName, newGroupDescription, user._id)
+        .catch((e) => {
+          toast.error(`${e}`);
+        })
+        .then(() => {
+          setNewGroupName("");
+          setNewGroupDescription("");
+        });
     }
     body = (
       <div>
@@ -103,6 +112,7 @@ function ListGroups(props: { userId }) {
               disabled={!newGroupName || !newGroupDescription}
             />
           </form>
+          <ToastContainer />
         </div>
       </div>
     );
