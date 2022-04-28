@@ -7,6 +7,11 @@ import { useRouter } from "next/router";
 import { useAuth0 } from "@auth0/auth0-react";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import Card from "@mui/material/Card";
+import CardContent from "@mui/material/CardContent";
+import Typography from "@mui/material/Typography";
+import CardActions from "@mui/material/CardActions";
+import Button from "@mui/material/Button";
 
 toast.configure();
 
@@ -64,6 +69,35 @@ function ListGroups(props: { userId }) {
   if (!props.userId) {
     return <div></div>;
   }
+  const groups = useQuery("listGroups") || [];
+  return (
+    <div>
+      {groups.map((g) => {
+        const inGroup = props.userId in g.members;
+        return (
+          <Card>
+            <CardContent>
+              {" "}
+              <Typography variant="h5" component="div">
+                {g.name}
+              </Typography>
+              <Typography>{g.description}</Typography>
+            </CardContent>
+            <CardActions>
+              {" "}
+              <Button size="small">{inGroup ? "Join" : "Leave"}</Button>
+            </CardActions>
+          </Card>
+        );
+      })}
+    </div>
+  );
+}
+
+function GroupView(props: { userId }) {
+  if (!props.userId) {
+    return <div></div>;
+  }
   const user = useQuery("getUser", props.userId);
   const [newGroupName, setNewGroupName] = useState("");
   const [newGroupDescription, setNewGroupDescription] = useState("");
@@ -88,6 +122,7 @@ function ListGroups(props: { userId }) {
         <p className="text-center">
           <span className="badge bg-dark">Logged in as {user.name}</span>
         </p>
+        <ListGroups userId={props.userId} />
         <div className="channel-box">
           <form
             onSubmit={handleCreateGroup}
@@ -152,7 +187,7 @@ function App() {
   return (
     <main className="py-4">
       <h1 className="text-center">Bookworm</h1>
-      <ListGroups userId={userId} />
+      <GroupView userId={userId} />
       <div className="main-content"></div>
     </main>
   );

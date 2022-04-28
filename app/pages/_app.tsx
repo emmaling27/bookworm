@@ -2,6 +2,10 @@ import { Auth0Provider, useAuth0 } from "@auth0/auth0-react";
 import "../src/index.css";
 import { ConvexProvider } from "convex-dev/react";
 import { convex } from "../src/common";
+import "@fontsource/roboto/300.css";
+import "@fontsource/roboto/400.css";
+import "@fontsource/roboto/500.css";
+import "@fontsource/roboto/700.css";
 
 export function LoginLogout() {
   let { isAuthenticated, isLoading, loginWithRedirect, logout, user } =
