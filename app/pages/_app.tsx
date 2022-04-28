@@ -43,7 +43,7 @@ export default function MyApp({ Component, pageProps }) {
       cacheLocation="localstorage"
     >
       <ConvexProvider client={convex}>
-        {/* <LoginLogout /> */}
+        <LoginLogout />
         <Component {...pageProps} />
       </ConvexProvider>
     </Auth0Provider>

@@ -9,3 +9,10 @@ export type User = {
   name: string;
   tokenIdentifier: string;
 };
+
+export type Nomination = {
+  _id: Id;
+  book: string;
+  nominator: string;
+  votes: number;
+};

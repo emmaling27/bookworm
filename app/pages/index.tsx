@@ -5,7 +5,6 @@ import { convex } from "../src/common";
 import { useConvex, useMutation, useQuery } from "../convex/_generated";
 import { useRouter } from "next/router";
 import { useAuth0 } from "@auth0/auth0-react";
-import { LoginLogout } from "./_app";
 
 function StartVote(props: { userId: Id }) {
   if (!props.userId) {
@@ -88,11 +87,9 @@ function App() {
       setUserId(null);
     }
   }, [isAuthenticated, isLoading, getIdTokenClaims, convex, storeUser, userId]);
-  console.log(userId);
   return (
     <main className="py-4">
       <h1 className="text-center">Convex Chat</h1>
-      <LoginLogout />
       {userId ? <StartVote userId={userId} /> : null}
       <div className="main-content"></div>
     </main>
