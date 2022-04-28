@@ -16,3 +16,11 @@ export type Nomination = {
   nominator: string;
   votes: number;
 };
+
+export type Group = {
+  _id: Id;
+  name: string;
+  description: string;
+  members: Id[];
+  creator: Id;
+}

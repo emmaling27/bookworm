@@ -10,12 +10,10 @@ function StartVote(props: { userId: Id }) {
   if (!props.userId) {
     return <div></div>;
   }
-  console.log("user id is ", props.userId);
   let router = useRouter();
   const user = useQuery("getUser", props.userId);
   const [newVoteName, setNewVoteName] = useState("");
   const startVote = useMutation("addVote");
-  console.log("user: ", user);
   let body;
   if (!user) {
     body = <div>Loading...</div>;
@@ -57,6 +55,60 @@ function StartVote(props: { userId: Id }) {
 
   return body;
 }
+
+function ListGroups(props: { userId }) {
+  if (!props.userId) {
+    return <div></div>;
+  }
+  const user = useQuery("getUser", props.userId);
+  const [newGroupName, setNewGroupName] = useState("");
+  const [newGroupDescription, setNewGroupDescription] = useState("");
+  const addGroup = useMutation("addGroup");
+  let body;
+  if (!user) {
+    body = <div>Loading...</div>;
+  } else {
+    async function handleCreateGroup(event: FormEvent) {
+      event.preventDefault();
+      setNewGroupName("");
+      setNewGroupDescription("");
+      await addGroup(newGroupName, newGroupDescription, user._id);
+    }
+    body = (
+      <div>
+        <p className="text-center">
+          <span className="badge bg-dark">Logged in as {user.name}</span>
+        </p>
+        <div className="channel-box">
+          <form
+            onSubmit={handleCreateGroup}
+            className="d-flex justify-content-center"
+          >
+            <input
+              value={newGroupName}
+              onChange={(event) => setNewGroupName(event.target.value)}
+              className="form-control w-50"
+              placeholder="Name of group"
+            />
+            <input
+              value={newGroupDescription}
+              onChange={(event) => setNewGroupDescription(event.target.value)}
+              className="form-control w-50"
+              placeholder="Describe the group..."
+            />
+            <input
+              type="submit"
+              value="Create Group"
+              className="ms-2 btn btn-primary"
+              disabled={!newGroupName || !newGroupDescription}
+            />
+          </form>
+        </div>
+      </div>
+    );
+  }
+  return body;
+}
 function App() {
   // Check authentication
   // TODO make this a helper since we'll probably need it everywhere
@@ -89,8 +141,8 @@ function App() {
   }, [isAuthenticated, isLoading, getIdTokenClaims, convex, storeUser, userId]);
   return (
     <main className="py-4">
-      <h1 className="text-center">Convex Chat</h1>
-      {userId ? <StartVote userId={userId} /> : null}
+      <h1 className="text-center">Bookworm</h1>
+      <ListGroups userId={userId} />
       <div className="main-content"></div>
     </main>
   );
