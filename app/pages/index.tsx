@@ -118,7 +118,7 @@ function ListGroups(props: { userId }) {
   );
 }
 
-function GroupView(props: { userId }) {
+function Groups(props: { userId }) {
   if (!props.userId) {
     return <div></div>;
   }
@@ -213,7 +213,7 @@ function App() {
   return (
     <main className="py-4">
       <h1 className="text-center">Bookworm</h1>
-      <GroupView userId={userId} />
+      <Groups userId={userId} />
       <div className="main-content"></div>
     </main>
   );

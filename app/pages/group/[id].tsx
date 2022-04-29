@@ -4,6 +4,7 @@ import { Id } from "convex-dev/values";
 import router, { useRouter } from "next/router";
 import { FormEvent, useEffect, useState } from "react";
 import { useConvex, useMutation, useQuery } from "../../convex/_generated";
+import { User } from "../../src/common";
 
 function NominationList(props: { vote: Id }) {
   let listNominations = [];
@@ -62,17 +63,13 @@ function NominateBox(props: { userId: Id }) {
   );
 }
 
-function MemberList(props: { group: Id }) {
-  const groupData = useQuery("getGroupData", props.group) || {
-    group: null,
-    memberData: [],
-  };
+function MemberList(props: { members: User[] }) {
   return (
     <div>
       {" "}
       <h3>Members</h3>
       <List>
-        {groupData.memberData.map((m) => {
+        {props.members.map((m) => {
           return <ListItem>{m.name}</ListItem>;
         })}
       </List>
@@ -80,7 +77,15 @@ function MemberList(props: { group: Id }) {
   );
 }
 
-export default function NominatePage() {
+function GroupView(props: { groupId: Id }) {
+  const groupData = useQuery("getGroupData", props.groupId) || {
+    group: null,
+    memberData: [],
+  };
+  return <MemberList members={groupData.memberData} />;
+}
+
+export default function GroupPage() {
   let { isAuthenticated, isLoading, getIdTokenClaims } = useAuth0();
   const [userId, setUserId] = useState<Id | null>(null);
   const convex = useConvex();
@@ -112,10 +117,10 @@ export default function NominatePage() {
   const router = useRouter();
   const id = router.query.id;
   if (typeof id == "string") {
-    const group = Id.fromString(id);
+    const groupId = Id.fromString(id);
     return (
       <main>
-        <MemberList group={group} />
+        <GroupView groupId={groupId} />
         {/* <NominationList vote={vote} />
         <div>
           What book would you like to nominate?
