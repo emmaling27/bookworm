@@ -27,6 +27,22 @@ export type Group = {
 }
 
 export type GroupData = {
-  group: Group,
-  memberData: User[]
+  group: Group;
+  memberData: User[];
+  openVote: Vote | null;
+  votes: Vote[];
+}
+
+export type Vote = {
+  name: string;
+  creator: Id;
+  group: Id;
+  status: VoteStatus
+}
+
+export enum VoteStatus {
+  Completed,
+  Nominating,
+  Voting,
+  Canceled,
 }

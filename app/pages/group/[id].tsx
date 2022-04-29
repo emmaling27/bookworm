@@ -4,7 +4,7 @@ import { Id } from "convex-dev/values";
 import router, { useRouter } from "next/router";
 import { FormEvent, useEffect, useState } from "react";
 import { useConvex, useMutation, useQuery } from "../../convex/_generated";
-import { User } from "../../src/common";
+import { User, Vote, VoteStatus } from "../../src/common";
 
 function NominationList(props: { vote: Id }) {
   let listNominations = [];
@@ -77,14 +77,75 @@ function MemberList(props: { members: User[] }) {
   );
 }
 
-function GroupView(props: { groupId: Id }) {
-  const groupData = useQuery("getGroupData", props.groupId) || {
-    group: null,
-    memberData: [],
-  };
-  return <MemberList members={groupData.memberData} />;
+function VoteView(props: { vote: Vote }) {
+  return <div>vote view here</div>;
 }
 
+function GroupView(props: { groupId: Id; userId: Id }) {
+  const { group, memberData, openVote, votes } = useQuery(
+    "getGroupData",
+    props.groupId
+  ) || {
+    group: { name: "", description: "", members: new Set([]) },
+    memberData: [],
+  };
+  return (
+    <div>
+      <h1>{group.name}</h1>
+      <p>{group.description}</p>
+      <MemberList members={memberData} />
+      {openVote ? (
+        <VoteView vote={openVote} />
+      ) : (
+        <StartVote userId={props.userId} groupId={props.groupId} />
+      )}
+    </div>
+  );
+}
+
+function StartVote(props: { userId: Id; groupId: Id }) {
+  if (!props.userId) {
+    return <div></div>;
+  }
+  const user = useQuery("getUser", props.userId);
+  const [newVoteName, setNewVoteName] = useState("");
+  const startVote = useMutation("addVote");
+  let body;
+  if (!user) {
+    body = <div>Loading...</div>;
+  } else {
+    async function handleStartVote(event: FormEvent) {
+      event.preventDefault();
+      setNewVoteName("");
+      let id = await startVote(newVoteName, user._id, props.groupId);
+    }
+    body = (
+      <div>
+        <div className="channel-box">
+          <form
+            onSubmit={handleStartVote}
+            className="d-flex justify-content-center"
+          >
+            <input
+              value={newVoteName}
+              onChange={(event) => setNewVoteName(event.target.value)}
+              className="form-control w-50"
+              placeholder="Start a vote..."
+            />
+            <input
+              type="submit"
+              value="Start"
+              className="ms-2 btn btn-primary"
+              disabled={!newVoteName}
+            />
+          </form>
+        </div>
+      </div>
+    );
+  }
+
+  return body;
+}
 export default function GroupPage() {
   let { isAuthenticated, isLoading, getIdTokenClaims } = useAuth0();
   const [userId, setUserId] = useState<Id | null>(null);
@@ -120,7 +181,7 @@ export default function GroupPage() {
     const groupId = Id.fromString(id);
     return (
       <main>
-        <GroupView groupId={groupId} />
+        <GroupView groupId={groupId} userId={userId} />
         {/* <NominationList vote={vote} />
         <div>
           What book would you like to nominate?

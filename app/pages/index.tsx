@@ -15,55 +15,7 @@ import Button from "@mui/material/Button";
 
 toast.configure();
 
-function StartVote(props: { userId: Id }) {
-  if (!props.userId) {
-    return <div></div>;
-  }
-  let router = useRouter();
-  const user = useQuery("getUser", props.userId);
-  const [newVoteName, setNewVoteName] = useState("");
-  const startVote = useMutation("addVote");
-  let body;
-  if (!user) {
-    body = <div>Loading...</div>;
-  } else {
-    async function handleStartVote(event: FormEvent) {
-      event.preventDefault();
-      setNewVoteName("");
-      let id = await startVote(newVoteName, user._id);
-      let url = `vote/${encodeURIComponent(id.toString())}`;
-      router.push(url);
-    }
-    body = (
-      <div>
-        <p className="text-center">
-          <span className="badge bg-dark">Logged in as {user.name}</span>
-        </p>
-        <div className="channel-box">
-          <form
-            onSubmit={handleStartVote}
-            className="d-flex justify-content-center"
-          >
-            <input
-              value={newVoteName}
-              onChange={(event) => setNewVoteName(event.target.value)}
-              className="form-control w-50"
-              placeholder="Start a vote..."
-            />
-            <input
-              type="submit"
-              value="Start"
-              className="ms-2 btn btn-primary"
-              disabled={!newVoteName}
-            />
-          </form>
-        </div>
-      </div>
-    );
-  }
 
-  return body;
-}
 
 function ListGroups(props: { userId }) {
   let router = useRouter();

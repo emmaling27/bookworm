@@ -1,7 +1,8 @@
 import { mutation } from "convex-dev/server";
 import { Id } from "convex-dev/values";
+import { VoteStatus } from "../src/common";
 
 // Create a new vote.
-export default mutation(({ db }, name: string, user: Id): Id => {
-  return db.insert("votes", { name, creator: user});
+export default mutation(({ db }, name: string, user: Id, group: Id): Id => {
+  return db.insert("votes", { name, creator: user, group, status: VoteStatus.Nominating});
 });

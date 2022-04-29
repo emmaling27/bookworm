@@ -1,6 +1,6 @@
 import { query } from "convex-dev/server";
 import { Id } from "convex-dev/values";
-import { GroupData, User } from "../src/common";
+import { GroupData, User, VoteStatus } from "../src/common";
 
 
 export default query(async ({db}, groupId: Id): Promise<GroupData> => {
@@ -11,5 +11,16 @@ export default query(async ({db}, groupId: Id): Promise<GroupData> => {
         let member: User = await db.get(Id.fromString(m));
         memberData.push(member);
     });
-    return { group, memberData };
+    const votes = await db.table("votes").filter(q => q.eq(q.field("group"), groupId)).collect();
+    const openVotes = votes.filter(v => v.status == VoteStatus.Nominating || v.status == VoteStatus.Voting);
+    if (openVotes.length > 1) {
+        throw new Error(`Can't have more than one vote open. Open votes are: ${openVotes}`);
+    }
+    let openVote;
+    if (openVotes.length > 0) {
+        openVote = openVotes.pop();
+    } else {
+        openVote = null;
+    }
+    return { group, memberData, votes, openVote};
 });
