@@ -12,7 +12,7 @@ function NominationList(props: { vote: Id }) {
 
   return (
     <div>
-      <h1>Nominations</h1>
+      <h3>Nominations</h3>
       <ul>
         {" "}
         {listNominations.map((nomination) => (
@@ -26,7 +26,7 @@ function NominationList(props: { vote: Id }) {
   );
 }
 
-function NominateBox(props: { userId: Id }) {
+function NominateBox(props: { userId: Id; voteId: Id }) {
   const [nomination, setNomination] = useState("");
   const nominate = useMutation("nominate");
 
@@ -36,11 +36,7 @@ function NominateBox(props: { userId: Id }) {
     // search for book (add later)
     // put the book in
     setNomination("");
-    const id = router.query.id;
-    if (typeof id == "string") {
-      const voteId = Id.fromString(id);
-      nominate(voteId, nomination, props.userId);
-    }
+    nominate(props.voteId, nomination, props.userId);
   }
   return (
     <div>
@@ -77,8 +73,23 @@ function MemberList(props: { members: User[] }) {
   );
 }
 
-function VoteView(props: { vote: Vote }) {
-  return <div>vote view here</div>;
+function VoteView(props: { vote: Vote; userId: Id }) {
+  return (
+    <div>
+      <h3>Vote Open: {props.vote.name}</h3>
+      {props.vote.status == VoteStatus.Nominating ? (
+        <div>
+          <NominationList vote={props.vote._id} />
+          <div>
+            What book would you like to nominate?
+            <NominateBox userId={props.userId} voteId={props.vote._id} />
+          </div>
+        </div>
+      ) : (
+        <h4>need a voting view</h4>
+      )}
+    </div>
+  );
 }
 
 function GroupView(props: { groupId: Id; userId: Id }) {
@@ -88,6 +99,7 @@ function GroupView(props: { groupId: Id; userId: Id }) {
   ) || {
     group: { name: "", description: "", members: new Set([]) },
     memberData: [],
+    openVote: null,
   };
   return (
     <div>
@@ -95,7 +107,7 @@ function GroupView(props: { groupId: Id; userId: Id }) {
       <p>{group.description}</p>
       <MemberList members={memberData} />
       {openVote ? (
-        <VoteView vote={openVote} />
+        <VoteView vote={openVote} userId={props.userId} />
       ) : (
         <StartVote userId={props.userId} groupId={props.groupId} />
       )}
@@ -182,11 +194,6 @@ export default function GroupPage() {
     return (
       <main>
         <GroupView groupId={groupId} userId={userId} />
-        {/* <NominationList vote={vote} />
-        <div>
-          What book would you like to nominate?
-          <NominateBox userId={userId} />
-        </div> */}
       </main>
     );
   } else {

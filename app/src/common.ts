@@ -34,6 +34,7 @@ export type GroupData = {
 }
 
 export type Vote = {
+  _id: Id;
   name: string;
   creator: Id;
   group: Id;
