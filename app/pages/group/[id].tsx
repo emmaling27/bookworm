@@ -1,4 +1,5 @@
 import { useAuth0 } from "@auth0/auth0-react";
+import { List, ListItem } from "@mui/material";
 import { Id } from "convex-dev/values";
 import router, { useRouter } from "next/router";
 import { FormEvent, useEffect, useState } from "react";
@@ -61,6 +62,24 @@ function NominateBox(props: { userId: Id }) {
   );
 }
 
+function MemberList(props: { group: Id }) {
+  const groupData = useQuery("getGroupData", props.group) || {
+    group: null,
+    memberData: [],
+  };
+  return (
+    <div>
+      {" "}
+      <h3>Members</h3>
+      <List>
+        {groupData.memberData.map((m) => {
+          return <ListItem>{m.name}</ListItem>;
+        })}
+      </List>
+    </div>
+  );
+}
+
 export default function NominatePage() {
   let { isAuthenticated, isLoading, getIdTokenClaims } = useAuth0();
   const [userId, setUserId] = useState<Id | null>(null);
@@ -93,14 +112,15 @@ export default function NominatePage() {
   const router = useRouter();
   const id = router.query.id;
   if (typeof id == "string") {
-    const vote = Id.fromString(id);
+    const group = Id.fromString(id);
     return (
       <main>
-        <NominationList vote={vote} />
+        <MemberList group={group} />
+        {/* <NominationList vote={vote} />
         <div>
           What book would you like to nominate?
           <NominateBox userId={userId} />
-        </div>
+        </div> */}
       </main>
     );
   } else {

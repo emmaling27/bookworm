@@ -5,6 +5,7 @@
 import type addGroup from "./addGroup";
 import type addGroupMember from "./addGroupMember";
 import type addVote from "./addVote";
+import type getGroupData from "./getGroupData";
 import type getUser from "./getUser";
 import type listGroups from "./listGroups";
 import type listNominations from "./listNominations";
@@ -41,6 +42,7 @@ type ClientQuery<F extends (first: QueryCtx, ...args: any) => any> = (
  */
 export type ConvexAPI = {
   queries: {
+    getGroupData: ClientQuery<typeof getGroupData>;
     getUser: ClientQuery<typeof getUser>;
     listGroups: ClientQuery<typeof listGroups>;
     listNominations: ClientQuery<typeof listNominations>;

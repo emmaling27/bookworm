@@ -43,7 +43,7 @@ export default function MyApp({ Component, pageProps }) {
     <Auth0Provider
       domain="dev-pz-qwrna.us.auth0.com"
       clientId="9E9Zg1m8Pi4AleweJPRDrR4iTLK9xWOu"
-      redirectUri="http://localhost:3000" // TODO: fix this - should be window.location.origin but that wasn't working for some reason
+      redirectUri={typeof window !== "undefined" && window.location.origin}
       cacheLocation="localstorage"
     >
       <ConvexProvider client={convex}>

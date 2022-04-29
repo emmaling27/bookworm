@@ -22,5 +22,11 @@ export type Group = {
   name: string;
   description: string;
   members: Set<string>;
+  // Add optional member data field here?
   creator: Id;
+}
+
+export type GroupData = {
+  group: Group,
+  memberData: User[]
 }

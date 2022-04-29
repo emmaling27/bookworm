@@ -66,6 +66,7 @@ function StartVote(props: { userId: Id }) {
 }
 
 function ListGroups(props: { userId }) {
+  let router = useRouter();
   if (!props.userId) {
     return <div></div>;
   }
@@ -77,7 +78,7 @@ function ListGroups(props: { userId }) {
       {groups.map((g) => {
         const inGroup = g.members.has(props.userId.toString());
         return (
-          <Card>
+          <Card key={g.name}>
             <CardContent>
               {" "}
               <Typography variant="h5" component="div">
@@ -98,6 +99,16 @@ function ListGroups(props: { userId }) {
                 }}
               >
                 {inGroup ? "Leave" : "Join"}
+              </Button>
+              <Button
+                size="small"
+                onClick={() => {
+                  let url = `group/${encodeURIComponent(g._id.toString())}`;
+                  router.push(url);
+                }}
+                disabled={!inGroup}
+              >
+                View
               </Button>
             </CardActions>
           </Card>
