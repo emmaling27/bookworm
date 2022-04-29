@@ -11,6 +11,7 @@ import type listGroups from "./listGroups";
 import type listNominations from "./listNominations";
 import type nominate from "./nominate";
 import type removeGroupMember from "./removeGroupMember";
+import type startVoting from "./startVoting";
 import type storeUser from "./storeUser";
 
 // This jumpstarts TypeScript completion of the convex-dev/values entry point.
@@ -53,6 +54,7 @@ export type ConvexAPI = {
     addVote: ClientMutation<typeof addVote>;
     nominate: ClientMutation<typeof nominate>;
     removeGroupMember: ClientMutation<typeof removeGroupMember>;
+    startVoting: ClientMutation<typeof startVoting>;
     storeUser: ClientMutation<typeof storeUser>;
   };
 };

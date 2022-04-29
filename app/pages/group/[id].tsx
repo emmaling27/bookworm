@@ -1,22 +1,29 @@
 import { useAuth0 } from "@auth0/auth0-react";
-import { List, ListItem } from "@mui/material";
+import { Button, List, ListItem } from "@mui/material";
 import { Id } from "convex-dev/values";
 import router, { useRouter } from "next/router";
 import { FormEvent, useEffect, useState } from "react";
 import { useConvex, useMutation, useQuery } from "../../convex/_generated";
 import { User, Vote, VoteStatus } from "../../src/common";
 
-function NominationList(props: { vote: Id }) {
-  let listNominations = [];
-  listNominations = useQuery("listNominations", props.vote) || [];
+function StartVoting(props: { vote: Id }) {
+  const startVoting = useMutation("startVoting");
+  return (
+    <Button variant="contained" onClick={() => startVoting(props.vote)}>
+      Let's vote!
+    </Button>
+  );
+}
 
+function NominationList(props: { vote: Id }) {
+  const listNominations = useQuery("listNominations", props.vote) || [];
   return (
     <div>
       <h3>Nominations</h3>
       <ul>
         {" "}
         {listNominations.map((nomination) => (
-          <li key={nomination._id}>
+          <li key={nomination.book}>
             {nomination.book} ({nomination.nominator}) with {nomination.votes}{" "}
             votes
           </li>
@@ -38,6 +45,7 @@ function NominateBox(props: { userId: Id; voteId: Id }) {
     setNomination("");
     nominate(props.voteId, nomination, props.userId);
   }
+
   return (
     <div>
       {" "}
@@ -84,6 +92,7 @@ function VoteView(props: { vote: Vote; userId: Id }) {
             What book would you like to nominate?
             <NominateBox userId={props.userId} voteId={props.vote._id} />
           </div>
+          <StartVoting vote={props.vote._id} />
         </div>
       ) : (
         <h4>need a voting view</h4>
@@ -109,13 +118,13 @@ function GroupView(props: { groupId: Id; userId: Id }) {
       {openVote ? (
         <VoteView vote={openVote} userId={props.userId} />
       ) : (
-        <StartVote userId={props.userId} groupId={props.groupId} />
+        <OpenVote userId={props.userId} groupId={props.groupId} />
       )}
     </div>
   );
 }
 
-function StartVote(props: { userId: Id; groupId: Id }) {
+function OpenVote(props: { userId: Id; groupId: Id }) {
   if (!props.userId) {
     return <div></div>;
   }
@@ -129,7 +138,7 @@ function StartVote(props: { userId: Id; groupId: Id }) {
     async function handleStartVote(event: FormEvent) {
       event.preventDefault();
       setNewVoteName("");
-      let id = await startVote(newVoteName, user._id, props.groupId);
+      await startVote(newVoteName, user._id, props.groupId);
     }
     body = (
       <div>
@@ -142,7 +151,7 @@ function StartVote(props: { userId: Id; groupId: Id }) {
               value={newVoteName}
               onChange={(event) => setNewVoteName(event.target.value)}
               className="form-control w-50"
-              placeholder="Start a vote..."
+              placeholder="Open a vote..."
             />
             <input
               type="submit"
