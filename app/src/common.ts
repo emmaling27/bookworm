@@ -21,6 +21,6 @@ export type Group = {
   _id: Id;
   name: string;
   description: string;
-  members: Id[];
+  members: Set<string>;
   creator: Id;
 }

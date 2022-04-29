@@ -70,10 +70,12 @@ function ListGroups(props: { userId }) {
     return <div></div>;
   }
   const groups = useQuery("listGroups") || [];
+  const addGroupMember = useMutation("addGroupMember");
+  const removeGroupMember = useMutation("removeGroupMember");
   return (
     <div>
       {groups.map((g) => {
-        const inGroup = props.userId in g.members;
+        const inGroup = g.members.has(props.userId.toString());
         return (
           <Card>
             <CardContent>
@@ -85,7 +87,18 @@ function ListGroups(props: { userId }) {
             </CardContent>
             <CardActions>
               {" "}
-              <Button size="small">{inGroup ? "Join" : "Leave"}</Button>
+              <Button
+                size="small"
+                onClick={() => {
+                  if (inGroup) {
+                    removeGroupMember(g._id, props.userId);
+                  } else {
+                    addGroupMember(props.userId, g._id);
+                  }
+                }}
+              >
+                {inGroup ? "Leave" : "Join"}
+              </Button>
             </CardActions>
           </Card>
         );

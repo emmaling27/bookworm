@@ -3,11 +3,13 @@
 // based on the contents of this directory.
 // To regenerate, run `convex codegen`.
 import type addGroup from "./addGroup";
+import type addGroupMember from "./addGroupMember";
 import type addVote from "./addVote";
 import type getUser from "./getUser";
 import type listGroups from "./listGroups";
 import type listNominations from "./listNominations";
 import type nominate from "./nominate";
+import type removeGroupMember from "./removeGroupMember";
 import type storeUser from "./storeUser";
 
 // This jumpstarts TypeScript completion of the convex-dev/values entry point.
@@ -45,8 +47,10 @@ export type ConvexAPI = {
   };
   mutations: {
     addGroup: ClientMutation<typeof addGroup>;
+    addGroupMember: ClientMutation<typeof addGroupMember>;
     addVote: ClientMutation<typeof addVote>;
     nominate: ClientMutation<typeof nominate>;
+    removeGroupMember: ClientMutation<typeof removeGroupMember>;
     storeUser: ClientMutation<typeof storeUser>;
   };
 };

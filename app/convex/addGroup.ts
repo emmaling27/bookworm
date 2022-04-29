@@ -6,5 +6,5 @@ export default mutation(async ({ db }, name: string, description: String, creato
     if (groups_with_same_name.length != 0) {
         throw new Error(`Group name was not unique. The group ${name} already exists.`)
     }
-    return db.insert("groups", { name, description, members: [creator], creator});
+    return db.insert("groups", { name, description, members: new Set([creator.toString()]), creator});
 });
