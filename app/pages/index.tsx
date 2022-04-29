@@ -155,6 +155,7 @@ function GroupView(props: { userId }) {
   return body;
 }
 function App() {
+  console.log("rendering app");
   // Check authentication
   // TODO make this a helper since we'll probably need it everywhere
   let { isAuthenticated, isLoading, getIdTokenClaims } = useAuth0();
@@ -163,6 +164,7 @@ function App() {
   const storeUser = useMutation("storeUser");
 
   useEffect(() => {
+    console.log("effect rerunning ", isLoading, isAuthenticated);
     if (isLoading) {
       return;
     }
@@ -183,7 +185,7 @@ function App() {
       convex.clearAuth();
       setUserId(null);
     }
-  }, [isAuthenticated, isLoading, getIdTokenClaims, convex, storeUser, userId]);
+  }, [isAuthenticated, isLoading, getIdTokenClaims, convex, storeUser]);
   return (
     <main className="py-4">
       <h1 className="text-center">Bookworm</h1>

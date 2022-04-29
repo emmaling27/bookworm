@@ -88,7 +88,7 @@ export default function NominatePage() {
       convex.clearAuth();
       setUserId(null);
     }
-  }, [isAuthenticated, isLoading, getIdTokenClaims, convex, storeUser, userId]);
+  }, [isAuthenticated, isLoading, getIdTokenClaims, convex, storeUser]);
 
   const router = useRouter();
   const id = router.query.id;
@@ -96,7 +96,7 @@ export default function NominatePage() {
     const vote = Id.fromString(id);
     return (
       <main>
-        <NominationList vote={vote}/>
+        <NominationList vote={vote} />
         <div>
           What book would you like to nominate?
           <NominateBox userId={userId} />
