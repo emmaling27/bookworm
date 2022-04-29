@@ -15,6 +15,7 @@ export type Nomination = {
   book: string;
   nominator: string;
   votes: number;
+  yesVote: boolean;
 };
 
 export type Group = {

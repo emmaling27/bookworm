@@ -1,7 +1,14 @@
 import { useAuth0 } from "@auth0/auth0-react";
-import { Button, List, ListItem } from "@mui/material";
+import {
+  Button,
+  Checkbox,
+  FormControlLabel,
+  FormGroup,
+  List,
+  ListItem,
+} from "@mui/material";
 import { Id } from "convex-dev/values";
-import router, { useRouter } from "next/router";
+import { useRouter } from "next/router";
 import { FormEvent, useEffect, useState } from "react";
 import { useConvex, useMutation, useQuery } from "../../convex/_generated";
 import { User, Vote, VoteStatus } from "../../src/common";
@@ -15,19 +22,44 @@ function StartVoting(props: { vote: Id }) {
   );
 }
 
-function NominationList(props: { vote: Id }) {
-  const listNominations = useQuery("listNominations", props.vote) || [];
+function NominationList(props: { vote: Vote; userId: Id }) {
+  const listNominations =
+    useQuery("listNominations", props.vote._id, props.userId) || [];
+  const changeVote = useMutation("changeVote");
   return (
     <div>
       <h3>Nominations</h3>
       <ul>
         {" "}
-        {listNominations.map((nomination) => (
-          <li key={nomination.book}>
-            {nomination.book} ({nomination.nominator}) with {nomination.votes}{" "}
-            votes
-          </li>
-        ))}
+        {listNominations.map((nomination) => {
+          if (props.vote.status == VoteStatus.Nominating) {
+            return (
+              <li key={nomination.book}>
+                {nomination.book} ({nomination.nominator}) with{" "}
+                {nomination.votes} votes
+              </li>
+            );
+          } else {
+            return (
+              <div>
+                <span>{nomination.votes}</span>
+                <FormControlLabel
+                  key={nomination.book}
+                  control={<Checkbox />}
+                  label={nomination.book}
+                  checked={nomination.yesVote}
+                  onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+                    changeVote(
+                      nomination._id,
+                      event.target.checked,
+                      props.userId
+                    )
+                  }
+                />
+              </div>
+            );
+          }
+        })}
       </ul>
     </div>
   );
@@ -87,7 +119,7 @@ function VoteView(props: { vote: Vote; userId: Id }) {
       <h3>Vote Open: {props.vote.name}</h3>
       {props.vote.status == VoteStatus.Nominating ? (
         <div>
-          <NominationList vote={props.vote._id} />
+          <NominationList vote={props.vote} userId={props.userId} />
           <div>
             What book would you like to nominate?
             <NominateBox userId={props.userId} voteId={props.vote._id} />
@@ -95,7 +127,9 @@ function VoteView(props: { vote: Vote; userId: Id }) {
           <StartVoting vote={props.vote._id} />
         </div>
       ) : (
-        <h4>need a voting view</h4>
+        <div>
+          <NominationList vote={props.vote} userId={props.userId} />
+        </div>
       )}
     </div>
   );

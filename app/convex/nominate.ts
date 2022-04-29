@@ -8,7 +8,7 @@ export default mutation(({ db }, vote: Id, book: string, user: Id) => {
     vote,
     book,
     user,
-    votes: 0
+    votes: new Set([])
   };
   db.insert("nominations", nomination);
 });
