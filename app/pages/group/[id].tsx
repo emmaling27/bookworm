@@ -11,13 +11,21 @@ import { Id } from "convex-dev/values";
 import { useRouter } from "next/router";
 import { FormEvent, useEffect, useState } from "react";
 import { useConvex, useMutation, useQuery } from "../../convex/_generated";
-import { User, Vote, VoteStatus } from "../../src/common";
+import { User, Vote, VoteStatus } from "../../src/model";
 
 function StartVoting(props: { vote: Id }) {
   const startVoting = useMutation("startVoting");
   return (
     <Button variant="contained" onClick={() => startVoting(props.vote)}>
       Let's vote!
+    </Button>
+  );
+}
+function EndVote(props: { voteId: Id }) {
+  const endVoting = useMutation("endVoting");
+  return (
+    <Button variant="contained" onClick={() => endVoting(props.voteId)}>
+      End voting
     </Button>
   );
 }
@@ -129,6 +137,7 @@ function VoteView(props: { vote: Vote; userId: Id }) {
       ) : (
         <div>
           <NominationList vote={props.vote} userId={props.userId} />
+          <EndVote voteId={props.vote._id} />
         </div>
       )}
     </div>

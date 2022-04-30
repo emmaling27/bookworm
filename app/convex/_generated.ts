@@ -6,6 +6,7 @@ import type addGroup from "./addGroup";
 import type addGroupMember from "./addGroupMember";
 import type addVote from "./addVote";
 import type changeVote from "./changeVote";
+import type endVoting from "./endVoting";
 import type getGroupData from "./getGroupData";
 import type getUser from "./getUser";
 import type listGroups from "./listGroups";
@@ -54,6 +55,7 @@ export type ConvexAPI = {
     addGroupMember: ClientMutation<typeof addGroupMember>;
     addVote: ClientMutation<typeof addVote>;
     changeVote: ClientMutation<typeof changeVote>;
+    endVoting: ClientMutation<typeof endVoting>;
     nominate: ClientMutation<typeof nominate>;
     removeGroupMember: ClientMutation<typeof removeGroupMember>;
     startVoting: ClientMutation<typeof startVoting>;

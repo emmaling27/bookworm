@@ -1,6 +1,6 @@
 import { query } from "convex-dev/server";
 import { Id } from "convex-dev/values";
-import { GroupData, User, VoteStatus } from "../src/common";
+import { GroupData, User, VoteStatus } from "../src/model";
 
 
 export default query(async ({db}, groupId: Id): Promise<GroupData> => {

@@ -1,6 +1,6 @@
 import { query } from "convex-dev/server";
 import { Id } from "convex-dev/values";
-import { Nomination } from "../src/common";
+import { Nomination } from "../src/model";
 
 // List all nominations for a given vote.
 export default query(async ({ db }, vote: Id, userId: Id): Promise<Nomination[]> => {
