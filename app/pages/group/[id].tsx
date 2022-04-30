@@ -1,5 +1,8 @@
 import { useAuth0 } from "@auth0/auth0-react";
 import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
   Button,
   Checkbox,
   FormControlLabel,
@@ -7,12 +10,14 @@ import {
   List,
   ListItem,
   ListItemText,
+  Typography,
 } from "@mui/material";
 import { Id } from "convex-dev/values";
 import { useRouter } from "next/router";
 import { FormEvent, useEffect, useState } from "react";
 import { useConvex, useMutation, useQuery } from "../../convex/_generated";
 import { Nomination, User, Vote, VoteStatus } from "../../src/model";
+import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 
 function StartVoting(props: { vote: Id }) {
   const startVoting = useMutation("startVoting");
@@ -117,12 +122,19 @@ function MemberList(props: { members: User[] }) {
   return (
     <div>
       {" "}
-      <h3>Members</h3>
-      <List>
-        {props.members.map((m) => {
-          return <ListItem>{m.name}</ListItem>;
-        })}
-      </List>
+      <Accordion>
+        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+          <Typography>Members</Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          {" "}
+          <List>
+            {props.members.map((m) => {
+              return <ListItem>{m.name}</ListItem>;
+            })}
+          </List>
+        </AccordionDetails>
+      </Accordion>
     </div>
   );
 }
