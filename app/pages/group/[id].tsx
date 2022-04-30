@@ -6,12 +6,13 @@ import {
   FormGroup,
   List,
   ListItem,
+  ListItemText,
 } from "@mui/material";
 import { Id } from "convex-dev/values";
 import { useRouter } from "next/router";
 import { FormEvent, useEffect, useState } from "react";
 import { useConvex, useMutation, useQuery } from "../../convex/_generated";
-import { User, Vote, VoteStatus } from "../../src/model";
+import { Nomination, User, Vote, VoteStatus } from "../../src/model";
 
 function StartVoting(props: { vote: Id }) {
   const startVoting = useMutation("startVoting");
@@ -36,8 +37,7 @@ function NominationList(props: { vote: Vote; userId: Id }) {
   const changeVote = useMutation("changeVote");
   return (
     <div>
-      <h3>Nominations</h3>
-      <ul>
+      <List>
         {" "}
         {listNominations.map((nomination) => {
           if (props.vote.status == VoteStatus.Nominating) {
@@ -47,7 +47,7 @@ function NominationList(props: { vote: Vote; userId: Id }) {
                 {nomination.votes} votes
               </li>
             );
-          } else {
+          } else if (props.vote.status == VoteStatus.Voting) {
             return (
               <div>
                 <span>{nomination.votes}</span>
@@ -66,9 +66,15 @@ function NominationList(props: { vote: Vote; userId: Id }) {
                 />
               </div>
             );
+          } else {
+            return (
+              <ListItem disablePadding>
+                <ListItemText primary={nomination.book} />
+              </ListItem>
+            );
           }
         })}
-      </ul>
+      </List>
     </div>
   );
 }
@@ -122,24 +128,38 @@ function MemberList(props: { members: User[] }) {
 }
 
 function VoteView(props: { vote: Vote; userId: Id }) {
+  let body;
+  if (props.vote.status == VoteStatus.Nominating) {
+    body = (
+      <div>
+        <h4>open for nominations</h4>
+        <NominationList vote={props.vote} userId={props.userId} />
+        <div>
+          What book would you like to nominate?
+          <NominateBox userId={props.userId} voteId={props.vote._id} />
+        </div>
+        <StartVoting vote={props.vote._id} />
+      </div>
+    );
+  } else if (props.vote.status == VoteStatus.Voting) {
+    body = (
+      <div>
+        <h4>open for voting</h4>
+        <NominationList vote={props.vote} userId={props.userId} />
+        <EndVote voteId={props.vote._id} />
+      </div>
+    );
+  } else {
+    body = (
+      <div>
+        <NominationList vote={props.vote} userId={props.userId} />
+      </div>
+    );
+  }
   return (
     <div>
-      <h3>Vote Open: {props.vote.name}</h3>
-      {props.vote.status == VoteStatus.Nominating ? (
-        <div>
-          <NominationList vote={props.vote} userId={props.userId} />
-          <div>
-            What book would you like to nominate?
-            <NominateBox userId={props.userId} voteId={props.vote._id} />
-          </div>
-          <StartVoting vote={props.vote._id} />
-        </div>
-      ) : (
-        <div>
-          <NominationList vote={props.vote} userId={props.userId} />
-          <EndVote voteId={props.vote._id} />
-        </div>
-      )}
+      <h3>{props.vote.name}</h3>
+      {body}
     </div>
   );
 }
@@ -152,17 +172,23 @@ function GroupView(props: { groupId: Id; userId: Id }) {
     group: { name: "", description: "", members: new Set([]) },
     memberData: [],
     openVote: null,
+    votes: [],
   };
   return (
     <div>
       <h1>{group.name}</h1>
       <p>{group.description}</p>
       <MemberList members={memberData} />
-      {openVote ? (
-        <VoteView vote={openVote} userId={props.userId} />
-      ) : (
-        <OpenVote userId={props.userId} groupId={props.groupId} />
-      )}
+      <div>
+        {votes.map((v) => (
+          <VoteView vote={v} userId={props.userId} />
+        ))}
+        {openVote ? (
+          <div></div>
+        ) : (
+          <OpenVote userId={props.userId} groupId={props.groupId} />
+        )}
+      </div>
     </div>
   );
 }
