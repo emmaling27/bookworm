@@ -74,6 +74,7 @@ function NominationList(props: { vote: Vote; userId: Id }) {
           } else {
             return (
               <ListItem disablePadding>
+                <Typography marginRight="1em">{nomination.votes}</Typography>
                 <ListItemText primary={nomination.book} />
               </ListItem>
             );
@@ -170,7 +171,9 @@ function VoteView(props: { vote: Vote; userId: Id }) {
   }
   return (
     <div>
-      <h3>{props.vote.name}</h3>
+      <h3>
+        {props.vote.name}: {props.vote.winner}
+      </h3>
       {body}
     </div>
   );

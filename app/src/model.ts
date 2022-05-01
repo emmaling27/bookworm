@@ -37,6 +37,7 @@ export type User = {
     group: Id;
     status: VoteStatus;
     dt: Date;
+    winner: string;
   }
   
   export enum VoteStatus {
