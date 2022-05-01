@@ -41,8 +41,12 @@ function EndVote(props: { voteId: Id }) {
   );
 }
 
-function Nomination(props: { nomination: Nomination; userId: Id }) {
-  const { nomination, userId } = props;
+function Nomination(props: {
+  nomination: Nomination;
+  userId: Id;
+  voteStatus: VoteStatus;
+}) {
+  const { nomination, userId, voteStatus } = props;
   const changeVote = useMutation("changeVote");
 
   return (
@@ -50,6 +54,12 @@ function Nomination(props: { nomination: Nomination; userId: Id }) {
       key={nomination.book}
       secondaryAction={NominationChat({ nomination, userId })}
     >
+      {" "}
+      {voteStatus == VoteStatus.Voting || voteStatus == VoteStatus.Completed ? (
+        <Typography marginRight="1em">{nomination.votes}</Typography>
+      ) : (
+        ""
+      )}
       {nomination.book} ({nomination.nominator})
     </ListItem>
   );
@@ -134,9 +144,7 @@ function NominationList(props: {
       <List>
         {" "}
         {props.nominations.map((nomination) => {
-          if (props.vote.status == VoteStatus.Nominating) {
-            return <Nomination nomination={nomination} userId={props.userId} />;
-          } else if (props.vote.status == VoteStatus.Voting) {
+          if (props.vote.status == VoteStatus.Voting) {
             return (
               <div key={nomination.book}>
                 <span>{nomination.votes}</span>
@@ -157,10 +165,11 @@ function NominationList(props: {
             );
           } else {
             return (
-              <ListItem key={nomination.book} disablePadding>
-                <Typography marginRight="1em">{nomination.votes}</Typography>
-                <ListItemText primary={nomination.book} />
-              </ListItem>
+              <Nomination
+                nomination={nomination}
+                userId={props.userId}
+                voteStatus={props.vote.status}
+              />
             );
           }
         })}
