@@ -44,74 +44,81 @@ function EndVote(props: { voteId: Id }) {
 function Nomination(props: { nomination: Nomination; userId: Id }) {
   const { nomination, userId } = props;
   const changeVote = useMutation("changeVote");
+
+  return (
+    <ListItem
+      key={nomination.book}
+      secondaryAction={NominationChat({ nomination, userId })}
+    >
+      {nomination.book} ({nomination.nominator})
+    </ListItem>
+  );
+}
+
+function NominationChat(props: { nomination: Nomination; userId: Id }) {
+  const { nomination, userId } = props;
+  // Popover set up
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
     null
   );
-  const nominationMessages =
-    useQuery("nominationMessages", nomination._id) || [];
+  const open = Boolean(anchorEl);
+  const id = open ? "simple-popover" : undefined;
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget);
   };
-  console.log(nominationMessages);
-
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+  // Chat message queries/mutations
+  const nominationMessages =
+    useQuery("nominationMessages", nomination._id) || [];
   const [newMessageText, setNewMessageText] = useState("");
   const sendMessage = useMutation("sendMessage");
   async function handleSendMessage(event: FormEvent) {
     event.preventDefault();
-    setNewMessageText(""); // reset text entry box
+    setNewMessageText("");
     await sendMessage(nomination._id, newMessageText, userId);
   }
 
-  const open = Boolean(anchorEl);
-  const id = open ? "simple-popover" : undefined;
   return (
-    <ListItem
-      key={nomination.book}
-      secondaryAction={
-        <div>
-          <IconButton aria-label="comment" onClick={handleClick}>
-            <CommentIcon />
-          </IconButton>
-          <Popover
-            id={id}
-            open={open}
-            anchorEl={anchorEl}
-            onClose={handleClose}
-            anchorOrigin={{
-              vertical: "bottom",
-              horizontal: "left",
-            }}
-          >
-            <Typography sx={{ p: 2 }}>Chat here about this book!</Typography>
-            <List>
-              {nominationMessages.map((msg) => {
-                return (
-                  <ListItem key={msg._id.toString()}>
-                    <Typography marginRight="1em">{msg.author}:</Typography>
-                    <Typography>{msg.body}</Typography>
-                  </ListItem>
-                );
-              })}
-            </List>
-            <TextField
-              id="outlined-basic"
-              label="Send message"
-              variant="outlined"
-              value={newMessageText}
-              onChange={(event) => setNewMessageText(event.target.value)}
-            />
-            <Button variant="contained" onClick={handleSendMessage}>
-              Send
-            </Button>
-          </Popover>
-        </div>
-      }
-    >
-      {nomination.book} ({nomination.nominator})
-    </ListItem>
+    <div>
+      <IconButton aria-label="comment" onClick={handleClick}>
+        <CommentIcon />
+      </IconButton>
+      <Popover
+        id={id}
+        open={open}
+        anchorEl={anchorEl}
+        onClose={handleClose}
+        anchorOrigin={{
+          vertical: "bottom",
+          horizontal: "left",
+        }}
+      >
+        <Typography sx={{ p: 2 }}>Chat here about this book!</Typography>
+        <List>
+          {nominationMessages.map((msg) => {
+            return (
+              <ListItem key={msg._id.toString()}>
+                <Typography marginRight="1em">{msg.author}:</Typography>
+                <Typography>{msg.body}</Typography>
+              </ListItem>
+            );
+          })}
+        </List>
+        <TextField
+          id="outlined-basic"
+          label="Send message"
+          variant="outlined"
+          value={newMessageText}
+          onChange={(event) => setNewMessageText(event.target.value)}
+        />
+        <Button variant="contained" onClick={handleSendMessage}>
+          Send
+        </Button>
+      </Popover>
+    </div>
   );
 }
 
