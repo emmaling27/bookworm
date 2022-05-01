@@ -12,6 +12,7 @@ import {
   ListItem,
   ListItemText,
   Popover,
+  TextField,
   Typography,
 } from "@mui/material";
 import { Id } from "convex-dev/values";
@@ -40,15 +41,86 @@ function EndVote(props: { voteId: Id }) {
   );
 }
 
+function Nomination(props: { nomination: Nomination; userId: Id }) {
+  const { nomination, userId } = props;
+  const changeVote = useMutation("changeVote");
+  const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
+    null
+  );
+  const nominationMessages =
+    useQuery("nominationMessages", nomination._id) || [];
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  console.log(nominationMessages);
+
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
+  const [newMessageText, setNewMessageText] = useState("");
+  const sendMessage = useMutation("sendMessage");
+  async function handleSendMessage(event: FormEvent) {
+    event.preventDefault();
+    setNewMessageText(""); // reset text entry box
+    await sendMessage(nomination._id, newMessageText, userId);
+  }
+
+  const open = Boolean(anchorEl);
+  const id = open ? "simple-popover" : undefined;
+  return (
+    <ListItem
+      key={nomination.book}
+      secondaryAction={
+        <div>
+          <IconButton aria-label="comment" onClick={handleClick}>
+            <CommentIcon />
+          </IconButton>
+          <Popover
+            id={id}
+            open={open}
+            anchorEl={anchorEl}
+            onClose={handleClose}
+            anchorOrigin={{
+              vertical: "bottom",
+              horizontal: "left",
+            }}
+          >
+            <Typography sx={{ p: 2 }}>Chat here about this book!</Typography>
+            <List>
+              {nominationMessages.map((msg) => {
+                return (
+                  <ListItem key={msg._id.toString()}>
+                    <Typography marginRight="1em">{msg.author}:</Typography>
+                    <Typography>{msg.body}</Typography>
+                  </ListItem>
+                );
+              })}
+            </List>
+            <TextField
+              id="outlined-basic"
+              label="Send message"
+              variant="outlined"
+              value={newMessageText}
+              onChange={(event) => setNewMessageText(event.target.value)}
+            />
+            <Button variant="contained" onClick={handleSendMessage}>
+              Send
+            </Button>
+          </Popover>
+        </div>
+      }
+    >
+      {nomination.book} ({nomination.nominator})
+    </ListItem>
+  );
+}
+
 function NominationList(props: {
   nominations: Nomination[];
   vote: Vote;
   userId: Id;
 }) {
   const changeVote = useMutation("changeVote");
-  const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
-    null
-  );
   // If it is a past vote, make it an accordion with the winner visible
   return (
     <div>
@@ -56,46 +128,7 @@ function NominationList(props: {
         {" "}
         {props.nominations.map((nomination) => {
           if (props.vote.status == VoteStatus.Nominating) {
-            const handleClick = (
-              event: React.MouseEvent<HTMLButtonElement>
-            ) => {
-              setAnchorEl(event.currentTarget);
-            };
-
-            const handleClose = () => {
-              setAnchorEl(null);
-            };
-
-            const open = Boolean(anchorEl);
-            const id = open ? "simple-popover" : undefined;
-            return (
-              <ListItem
-                key={nomination.book}
-                secondaryAction={
-                  <div>
-                    <IconButton aria-label="comment" onClick={handleClick}>
-                      <CommentIcon />
-                    </IconButton>
-                    <Popover
-                      id={id}
-                      open={open}
-                      anchorEl={anchorEl}
-                      onClose={handleClose}
-                      anchorOrigin={{
-                        vertical: "bottom",
-                        horizontal: "left",
-                      }}
-                    >
-                      <Typography sx={{ p: 2 }}>
-                        Chat here about this book!
-                      </Typography>
-                    </Popover>
-                  </div>
-                }
-              >
-                {nomination.book} ({nomination.nominator})
-              </ListItem>
-            );
+            return <Nomination nomination={nomination} userId={props.userId} />;
           } else if (props.vote.status == VoteStatus.Voting) {
             return (
               <div key={nomination.book}>

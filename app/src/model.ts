@@ -46,3 +46,11 @@ export type User = {
     Voting,
     Canceled,
   }
+
+  export type Message = {
+      _id: Id,
+      nomination: Id,
+      body: string;
+      author: string;
+      time: number;
+  }

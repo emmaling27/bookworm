@@ -12,7 +12,9 @@ import type getUser from "./getUser";
 import type listGroups from "./listGroups";
 import type listNominations from "./listNominations";
 import type nominate from "./nominate";
+import type nominationMessages from "./nominationMessages";
 import type removeGroupMember from "./removeGroupMember";
+import type sendMessage from "./sendMessage";
 import type startVoting from "./startVoting";
 import type storeUser from "./storeUser";
 
@@ -49,6 +51,7 @@ export type ConvexAPI = {
     getUser: ClientQuery<typeof getUser>;
     listGroups: ClientQuery<typeof listGroups>;
     listNominations: ClientQuery<typeof listNominations>;
+    nominationMessages: ClientQuery<typeof nominationMessages>;
   };
   mutations: {
     addGroup: ClientMutation<typeof addGroup>;
@@ -58,6 +61,7 @@ export type ConvexAPI = {
     endVoting: ClientMutation<typeof endVoting>;
     nominate: ClientMutation<typeof nominate>;
     removeGroupMember: ClientMutation<typeof removeGroupMember>;
+    sendMessage: ClientMutation<typeof sendMessage>;
     startVoting: ClientMutation<typeof startVoting>;
     storeUser: ClientMutation<typeof storeUser>;
   };
