@@ -6,13 +6,9 @@ import {
   Button,
   Checkbox,
   FormControlLabel,
-  FormGroup,
   IconButton,
   List,
   ListItem,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
   Popover,
   TextField,
   Typography,
@@ -177,9 +173,6 @@ function NominateBox(props: { userId: Id; voteId: Id }) {
 
   async function handleNominate(event: FormEvent) {
     event.preventDefault();
-    // update client state?
-    // search for book (add later)
-    // put the book in
     setNomination("");
     nominate(props.voteId, nomination, props.userId);
   }
@@ -289,7 +282,7 @@ function GroupView(props: { groupId: Id; userId: Id }) {
     openVote: null,
     votes: [],
   };
-  votes.sort((a: Vote, b: Vote) => a.dt - b.dt);
+  votes.sort((a: Vote, b: Vote) => b.time - a.time);
   console.log(votes);
   return (
     <div>

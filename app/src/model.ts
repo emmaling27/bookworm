@@ -36,7 +36,7 @@ export type User = {
     creator: Id;
     group: Id;
     status: VoteStatus;
-    dt: Date;
+    time: number;
     winner: string;
   }
   
