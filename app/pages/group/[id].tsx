@@ -226,7 +226,7 @@ function VoteView(props: { vote: Vote; userId: Id }) {
   if (props.vote.status == VoteStatus.Nominating) {
     body = (
       <div>
-        <h4>open for nominations</h4>
+        <Typography variant="h5">open for nominations</Typography>
         <NominationList
           nominations={nominations}
           vote={props.vote}
@@ -242,7 +242,7 @@ function VoteView(props: { vote: Vote; userId: Id }) {
   } else if (props.vote.status == VoteStatus.Voting) {
     body = (
       <div>
-        <h4>open for voting</h4>
+        <Typography variant="h5">open for voting</Typography>
         <NominationList
           nominations={nominations}
           vote={props.vote}
@@ -263,10 +263,10 @@ function VoteView(props: { vote: Vote; userId: Id }) {
     );
   }
   return (
-    <div>
-      <h3>
+    <div className="vote-view">
+      <Typography variant="h3">
         {props.vote.name}: {props.vote.winner}
-      </h3>
+      </Typography>
       {body}
     </div>
   );
@@ -283,7 +283,6 @@ function GroupView(props: { groupId: Id; userId: Id }) {
     votes: [],
   };
   votes.sort((a: Vote, b: Vote) => b.time - a.time);
-  console.log(votes);
   return (
     <div>
       <title>{group.name}</title>

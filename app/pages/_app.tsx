@@ -6,6 +6,7 @@ import "@fontsource/roboto/300.css";
 import "@fontsource/roboto/400.css";
 import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
+import { Button, Typography } from "@mui/material";
 
 export function LoginLogout() {
   let { isAuthenticated, isLoading, loginWithRedirect, logout, user } =
@@ -18,27 +19,29 @@ export function LoginLogout() {
       <div>
         {/* We know that Auth0 provides the user's name, but another provider
         might not. */}
-        <p>Logged in as {user!.name}</p>
-        <button
-          className="btn btn-primary"
+        <Typography paragraph>Logged in as {user!.name}</Typography>
+        <Button
+          variant="contained"
           onClick={() => logout({ returnTo: window.location.origin })}
         >
           Log out
-        </button>
+        </Button>
       </div>
     );
   } else {
     return (
-      <button className="btn btn-primary" onClick={loginWithRedirect}>
-        Log in
-      </button>
+      <div>
+        {" "}
+        <Button variant="contained" onClick={loginWithRedirect}>
+          Log in
+        </Button>
+      </div>
     );
   }
 }
 
 // This default export is required in a new `pages/_app.js` file.
 export default function MyApp({ Component, pageProps }) {
-  console.log("myapp");
   return (
     <Auth0Provider
       domain="dev-pz-qwrna.us.auth0.com"

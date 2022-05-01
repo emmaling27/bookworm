@@ -15,8 +15,6 @@ import Button from "@mui/material/Button";
 
 toast.configure();
 
-
-
 function ListGroups(props: { userId: Id }) {
   let router = useRouter();
   if (!props.userId) {
@@ -95,9 +93,6 @@ function Groups(props: { userId }) {
     }
     body = (
       <div>
-        <p className="text-center">
-          <span className="badge bg-dark">Logged in as {user.name}</span>
-        </p>
         <ListGroups userId={props.userId} />
         <div className="channel-box">
           <form
@@ -131,7 +126,6 @@ function Groups(props: { userId }) {
   return body;
 }
 function App() {
-  console.log("rendering app");
   // Check authentication
   // TODO make this a helper since we'll probably need it everywhere
   let { isAuthenticated, isLoading, getIdTokenClaims } = useAuth0();
@@ -140,7 +134,6 @@ function App() {
   const storeUser = useMutation("storeUser");
 
   useEffect(() => {
-    console.log("effect rerunning ", isLoading, isAuthenticated);
     if (isLoading) {
       return;
     }
@@ -164,9 +157,8 @@ function App() {
   }, [isAuthenticated, isLoading, getIdTokenClaims, convex, storeUser]);
   return (
     <main className="py-4">
-      <h1 className="text-center">Bookworm</h1>
+      <Typography variant="h1">Bookworm</Typography>
       <Groups userId={userId} />
-      <div className="main-content"></div>
     </main>
   );
 }

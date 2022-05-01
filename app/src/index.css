@@ -27,3 +27,8 @@ main {
 .chat-box {
   flex-grow: 1;
 }
+
+.vote-view {
+  margin-bottom: 1em;
+  margin-top: 1em;
+}

@@ -1,5 +1,5 @@
 {
-  "name": "2-filters-and-references",
+  "name": "bookworm",
   "version": "0.0.0",
   "scripts": {
     "dev": "next dev",
