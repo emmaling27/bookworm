@@ -7,9 +7,11 @@ import {
   Checkbox,
   FormControlLabel,
   FormGroup,
+  IconButton,
   List,
   ListItem,
   ListItemText,
+  Popover,
   Typography,
 } from "@mui/material";
 import { Id } from "convex-dev/values";
@@ -18,6 +20,8 @@ import { FormEvent, useEffect, useState } from "react";
 import { useConvex, useMutation, useQuery } from "../../convex/_generated";
 import { Nomination, User, Vote, VoteStatus } from "../../src/model";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import CommentIcon from "@mui/icons-material/Comment";
+import React from "react";
 
 function StartVoting(props: { vote: Id }) {
   const startVoting = useMutation("startVoting");
@@ -42,7 +46,9 @@ function NominationList(props: {
   userId: Id;
 }) {
   const changeVote = useMutation("changeVote");
-
+  const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
+    null
+  );
   // If it is a past vote, make it an accordion with the winner visible
   return (
     <div>
@@ -50,10 +56,44 @@ function NominationList(props: {
         {" "}
         {props.nominations.map((nomination) => {
           if (props.vote.status == VoteStatus.Nominating) {
+            const handleClick = (
+              event: React.MouseEvent<HTMLButtonElement>
+            ) => {
+              setAnchorEl(event.currentTarget);
+            };
+
+            const handleClose = () => {
+              setAnchorEl(null);
+            };
+
+            const open = Boolean(anchorEl);
+            const id = open ? "simple-popover" : undefined;
             return (
-              <ListItem key={nomination.book}>
-                {nomination.book} ({nomination.nominator}) with{" "}
-                {nomination.votes} votes
+              <ListItem
+                key={nomination.book}
+                secondaryAction={
+                  <div>
+                    <IconButton aria-label="comment" onClick={handleClick}>
+                      <CommentIcon />
+                    </IconButton>
+                    <Popover
+                      id={id}
+                      open={open}
+                      anchorEl={anchorEl}
+                      onClose={handleClose}
+                      anchorOrigin={{
+                        vertical: "bottom",
+                        horizontal: "left",
+                      }}
+                    >
+                      <Typography sx={{ p: 2 }}>
+                        Chat here about this book!
+                      </Typography>
+                    </Popover>
+                  </div>
+                }
+              >
+                {nomination.book} ({nomination.nominator})
               </ListItem>
             );
           } else if (props.vote.status == VoteStatus.Voting) {
