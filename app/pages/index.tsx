@@ -17,7 +17,7 @@ toast.configure();
 
 
 
-function ListGroups(props: { userId }) {
+function ListGroups(props: { userId: Id }) {
   let router = useRouter();
   if (!props.userId) {
     return <div></div>;

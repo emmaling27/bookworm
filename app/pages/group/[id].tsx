@@ -36,25 +36,29 @@ function EndVote(props: { voteId: Id }) {
   );
 }
 
-function NominationList(props: { vote: Vote; userId: Id }) {
-  const listNominations =
-    useQuery("listNominations", props.vote._id, props.userId) || [];
+function NominationList(props: {
+  nominations: Nomination[];
+  vote: Vote;
+  userId: Id;
+}) {
   const changeVote = useMutation("changeVote");
+
+  // If it is a past vote, make it an accordion with the winner visible
   return (
     <div>
       <List>
         {" "}
-        {listNominations.map((nomination) => {
+        {props.nominations.map((nomination) => {
           if (props.vote.status == VoteStatus.Nominating) {
             return (
-              <li key={nomination.book}>
+              <ListItem key={nomination.book}>
                 {nomination.book} ({nomination.nominator}) with{" "}
                 {nomination.votes} votes
-              </li>
+              </ListItem>
             );
           } else if (props.vote.status == VoteStatus.Voting) {
             return (
-              <div>
+              <div key={nomination.book}>
                 <span>{nomination.votes}</span>
                 <FormControlLabel
                   key={nomination.book}
@@ -73,7 +77,7 @@ function NominationList(props: { vote: Vote; userId: Id }) {
             );
           } else {
             return (
-              <ListItem disablePadding>
+              <ListItem key={nomination.book} disablePadding>
                 <Typography marginRight="1em">{nomination.votes}</Typography>
                 <ListItemText primary={nomination.book} />
               </ListItem>
@@ -131,7 +135,7 @@ function MemberList(props: { members: User[] }) {
           {" "}
           <List>
             {props.members.map((m) => {
-              return <ListItem>{m.name}</ListItem>;
+              return <ListItem key={m._id.toString()}>{m.name}</ListItem>;
             })}
           </List>
         </AccordionDetails>
@@ -141,31 +145,45 @@ function MemberList(props: { members: User[] }) {
 }
 
 function VoteView(props: { vote: Vote; userId: Id }) {
+  const nominations =
+    useQuery("listNominations", props.vote._id, props.userId) || [];
   let body;
   if (props.vote.status == VoteStatus.Nominating) {
     body = (
       <div>
         <h4>open for nominations</h4>
-        <NominationList vote={props.vote} userId={props.userId} />
+        <NominationList
+          nominations={nominations}
+          vote={props.vote}
+          userId={props.userId}
+        />
         <div>
           What book would you like to nominate?
           <NominateBox userId={props.userId} voteId={props.vote._id} />
         </div>
-        <StartVoting vote={props.vote._id} />
+        {nominations.length > 0 ? <StartVoting vote={props.vote._id} /> : ""}
       </div>
     );
   } else if (props.vote.status == VoteStatus.Voting) {
     body = (
       <div>
         <h4>open for voting</h4>
-        <NominationList vote={props.vote} userId={props.userId} />
-        <EndVote voteId={props.vote._id} />
+        <NominationList
+          nominations={nominations}
+          vote={props.vote}
+          userId={props.userId}
+        />
+        {nominations.length > 0 ? <EndVote voteId={props.vote._id} /> : ""}
       </div>
     );
   } else {
     body = (
       <div>
-        <NominationList vote={props.vote} userId={props.userId} />
+        <NominationList
+          nominations={nominations}
+          vote={props.vote}
+          userId={props.userId}
+        />
       </div>
     );
   }
@@ -189,14 +207,19 @@ function GroupView(props: { groupId: Id; userId: Id }) {
     openVote: null,
     votes: [],
   };
+  votes.sort((a: Vote, b: Vote) => a.dt - b.dt);
+  console.log(votes);
   return (
     <div>
-      <h1>{group.name}</h1>
-      <p>{group.description}</p>
+      <title>{group.name}</title>
+      <Typography variant="h1" gutterBottom>
+        {group.name}
+      </Typography>
+      <Typography paragraph>{group.description}</Typography>
       <MemberList members={memberData} />
       <div>
         {votes.map((v) => (
-          <VoteView vote={v} userId={props.userId} />
+          <VoteView key={v._id} vote={v} userId={props.userId} />
         ))}
         {openVote ? (
           <div></div>
