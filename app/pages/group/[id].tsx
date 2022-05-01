@@ -10,6 +10,8 @@ import {
   IconButton,
   List,
   ListItem,
+  ListItemButton,
+  ListItemIcon,
   ListItemText,
   Popover,
   TextField,
@@ -48,7 +50,6 @@ function Nomination(props: {
 }) {
   const { nomination, userId, voteStatus } = props;
   const changeVote = useMutation("changeVote");
-
   return (
     <ListItem
       key={nomination.book}
@@ -60,7 +61,20 @@ function Nomination(props: {
       ) : (
         ""
       )}
-      {nomination.book} ({nomination.nominator})
+      {voteStatus == VoteStatus.Voting ? (
+        <FormControlLabel
+          key={nomination.book}
+          control={<Checkbox />}
+          label={nomination.book}
+          checked={nomination.yesVote}
+          onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
+            changeVote(nomination._id, event.target.checked, props.userId)
+          }
+        />
+      ) : (
+        <Typography marginRight=".5em">{nomination.book}</Typography>
+      )}
+      ({nomination.nominator})
     </ListItem>
   );
 }
@@ -106,7 +120,9 @@ function NominationChat(props: { nomination: Nomination; userId: Id }) {
           horizontal: "left",
         }}
       >
-        <Typography sx={{ p: 2 }}>Chat here about this book!</Typography>
+        <Typography sx={{ p: 2 }}>
+          Chat here about {nomination.book}!
+        </Typography>
         <List>
           {nominationMessages.map((msg) => {
             return (
@@ -137,41 +153,18 @@ function NominationList(props: {
   vote: Vote;
   userId: Id;
 }) {
-  const changeVote = useMutation("changeVote");
-  // If it is a past vote, make it an accordion with the winner visible
   return (
     <div>
       <List>
         {" "}
         {props.nominations.map((nomination) => {
-          if (props.vote.status == VoteStatus.Voting) {
-            return (
-              <div key={nomination.book}>
-                <span>{nomination.votes}</span>
-                <FormControlLabel
-                  key={nomination.book}
-                  control={<Checkbox />}
-                  label={nomination.book}
-                  checked={nomination.yesVote}
-                  onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-                    changeVote(
-                      nomination._id,
-                      event.target.checked,
-                      props.userId
-                    )
-                  }
-                />
-              </div>
-            );
-          } else {
-            return (
-              <Nomination
-                nomination={nomination}
-                userId={props.userId}
-                voteStatus={props.vote.status}
-              />
-            );
-          }
+          return (
+            <Nomination
+              nomination={nomination}
+              userId={props.userId}
+              voteStatus={props.vote.status}
+            />
+          );
         })}
       </List>
     </div>
