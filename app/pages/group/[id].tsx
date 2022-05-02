@@ -57,7 +57,13 @@ function Nomination(props: {
       {voteStatus == VoteStatus.Voting || voteStatus == VoteStatus.Completed ? (
         <Typography marginRight="1em">{nomination.votes}</Typography>
       ) : (
-        ""
+        <IconButton
+          edge="end"
+          aria-label="delete"
+          onClick={() => deleteNomination(nomination._id)}
+        >
+          <DeleteIcon />
+        </IconButton>
       )}
       {voteStatus == VoteStatus.Voting ? (
         <FormControlLabel
@@ -73,13 +79,6 @@ function Nomination(props: {
         <Typography marginRight=".5em">{nomination.book}</Typography>
       )}
       ({nomination.nominator})
-      <IconButton
-        edge="end"
-        aria-label="delete"
-        onClick={() => deleteNomination(nomination._id)}
-      >
-        <DeleteIcon />
-      </IconButton>{" "}
     </ListItem>
   );
 }
