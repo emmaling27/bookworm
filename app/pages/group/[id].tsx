@@ -21,6 +21,7 @@ import { Nomination, User, Vote, VoteStatus } from "../../src/model";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import CommentIcon from "@mui/icons-material/Comment";
 import React from "react";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 function StartVoting(props: { vote: Id }) {
   const startVoting = useMutation("startVoting");
@@ -46,6 +47,7 @@ function Nomination(props: {
 }) {
   const { nomination, userId, voteStatus } = props;
   const changeVote = useMutation("changeVote");
+  const deleteNomination = useMutation("deleteNomination");
   return (
     <ListItem
       key={nomination.book}
@@ -71,6 +73,13 @@ function Nomination(props: {
         <Typography marginRight=".5em">{nomination.book}</Typography>
       )}
       ({nomination.nominator})
+      <IconButton
+        edge="end"
+        aria-label="delete"
+        onClick={() => deleteNomination(nomination._id)}
+      >
+        <DeleteIcon />
+      </IconButton>{" "}
     </ListItem>
   );
 }
