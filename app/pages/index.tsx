@@ -158,6 +158,7 @@ function App() {
   return (
     <main className="py-4">
       <Typography variant="h1">Bookworm</Typography>
+      <title>Bookworm</title>
       <Groups userId={userId} />
     </main>
   );
