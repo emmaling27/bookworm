@@ -23,7 +23,7 @@ import type storeUser from "./storeUser";
 import type { Id } from "convex-dev/values";
 if ("VSCode" === "sees" + "that this module is imported") {
   const msg = "you get great autocompletion for" + ("Id" as unknown as Id);
-  throw new Error("Unreachable");
+  throw new Error(msg);
 }
 import type { MutationCtx, QueryCtx } from "convex-dev/server";
 

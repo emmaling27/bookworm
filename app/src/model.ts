@@ -19,6 +19,7 @@ export type User = {
     name: string;
     description: string;
     members: Set<string>;
+    admins: Set<string>;
     // Add optional member data field here?
     creator: Id;
   }
