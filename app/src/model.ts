@@ -23,6 +23,12 @@ export type User = {
     // Add optional member data field here?
     creator: Id;
   }
+
+  export type JoinRequest = {
+    _id: Id;
+    user: Id;
+    group: Id;
+  }
   
   export type GroupData = {
     group: Group;

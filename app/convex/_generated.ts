@@ -4,6 +4,7 @@
 // To regenerate, run `convex codegen`.
 import type addGroup from "./addGroup";
 import type addGroupMember from "./addGroupMember";
+import type addJoinRequest from "./addJoinRequest";
 import type addVote from "./addVote";
 import type changeVote from "./changeVote";
 import type deleteNomination from "./deleteNomination";
@@ -11,6 +12,7 @@ import type endVoting from "./endVoting";
 import type getGroupData from "./getGroupData";
 import type getUser from "./getUser";
 import type listGroups from "./listGroups";
+import type listJoinRequests from "./listJoinRequests";
 import type listNominations from "./listNominations";
 import type nominate from "./nominate";
 import type nominationMessages from "./nominationMessages";
@@ -51,12 +53,14 @@ export type ConvexAPI = {
     getGroupData: ClientQuery<typeof getGroupData>;
     getUser: ClientQuery<typeof getUser>;
     listGroups: ClientQuery<typeof listGroups>;
+    listJoinRequests: ClientQuery<typeof listJoinRequests>;
     listNominations: ClientQuery<typeof listNominations>;
     nominationMessages: ClientQuery<typeof nominationMessages>;
   };
   mutations: {
     addGroup: ClientMutation<typeof addGroup>;
     addGroupMember: ClientMutation<typeof addGroupMember>;
+    addJoinRequest: ClientMutation<typeof addJoinRequest>;
     addVote: ClientMutation<typeof addVote>;
     changeVote: ClientMutation<typeof changeVote>;
     deleteNomination: ClientMutation<typeof deleteNomination>;

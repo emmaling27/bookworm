@@ -13,7 +13,7 @@ export function ListGroups(props: { userId: Id }) {
     return <div></div>;
   }
   const groups = useQuery("listGroups") || [];
-  const addGroupMember = useMutation("addGroupMember");
+  const addJoinRequest = useMutation("addJoinRequest");
   const removeGroupMember = useMutation("removeGroupMember");
   return (
     <div>
@@ -36,11 +36,11 @@ export function ListGroups(props: { userId: Id }) {
                   if (inGroup) {
                     removeGroupMember(g._id, props.userId);
                   } else {
-                    addGroupMember(props.userId, g._id);
+                    addJoinRequest(props.userId, g._id);
                   }
                 }}
               >
-                {inGroup ? "Leave" : "Join"}
+                {inGroup ? "Leave" : "Request to Join"}
               </Button>
               <Button
                 size="small"

@@ -1,11 +1,12 @@
 import { Typography } from "@mui/material";
 import { Id } from "convex-dev/values";
 import { useQuery } from "../../convex/_generated";
-import { Vote } from "../model";
+import { User, Vote } from "../model";
 import React from "react";
 import { OpenVote } from "./OpenVote";
 import { MemberList } from "./MemberList";
 import { VoteView } from "./VoteView";
+import { JoinRequests } from "./JoinRequests";
 
 export function GroupView(props: { groupId: Id; userId: Id }) {
   const { group, memberData, openVote, votes } = useQuery(
@@ -17,6 +18,9 @@ export function GroupView(props: { groupId: Id; userId: Id }) {
     openVote: null,
     votes: [],
   };
+  const joinRequests: User[] =
+    useQuery("listJoinRequests", props.groupId) || [];
+  console.log({ joinRequests });
   votes.sort((a: Vote, b: Vote) => b.time - a.time);
   return (
     <div>
@@ -26,6 +30,7 @@ export function GroupView(props: { groupId: Id; userId: Id }) {
       </Typography>
       <Typography paragraph>{group.description}</Typography>
       <MemberList members={memberData} />
+      <JoinRequests users={joinRequests} groupId={props.groupId} />
       <div>
         {votes.map((v) => (
           <VoteView key={v._id.toString()} vote={v} userId={props.userId} />
