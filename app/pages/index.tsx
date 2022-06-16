@@ -1,130 +1,16 @@
-import { useState, FormEvent, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { ConvexProvider } from "convex-dev/react";
 import { Id } from "convex-dev/values";
 import { convex } from "../src/common";
-import { useConvex, useMutation, useQuery } from "../convex/_generated";
-import { useRouter } from "next/router";
+import { useConvex, useMutation } from "../convex/_generated";
 import { useAuth0 } from "@auth0/auth0-react";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
-import CardActions from "@mui/material/CardActions";
-import Button from "@mui/material/Button";
+import { Groups } from "../src/components/Groups";
 
 toast.configure();
 
-function ListGroups(props: { userId: Id }) {
-  let router = useRouter();
-  if (!props.userId) {
-    return <div></div>;
-  }
-  const groups = useQuery("listGroups") || [];
-  const addGroupMember = useMutation("addGroupMember");
-  const removeGroupMember = useMutation("removeGroupMember");
-  return (
-    <div>
-      {groups.map((g) => {
-        const inGroup = g.members.has(props.userId.toString());
-        return (
-          <Card key={g.name}>
-            <CardContent>
-              {" "}
-              <Typography variant="h5" component="div">
-                {g.name}
-              </Typography>
-              <Typography>{g.description}</Typography>
-            </CardContent>
-            <CardActions>
-              {" "}
-              <Button
-                size="small"
-                onClick={() => {
-                  if (inGroup) {
-                    removeGroupMember(g._id, props.userId);
-                  } else {
-                    addGroupMember(props.userId, g._id);
-                  }
-                }}
-              >
-                {inGroup ? "Leave" : "Join"}
-              </Button>
-              <Button
-                size="small"
-                onClick={() => {
-                  let url = `group/${encodeURIComponent(g._id.toString())}`;
-                  router.push(url);
-                }}
-                disabled={!inGroup}
-              >
-                View
-              </Button>
-            </CardActions>
-          </Card>
-        );
-      })}
-    </div>
-  );
-}
-
-function Groups(props: { userId }) {
-  if (!props.userId) {
-    return <div></div>;
-  }
-  const user = useQuery("getUser", props.userId);
-  const [newGroupName, setNewGroupName] = useState("");
-  const [newGroupDescription, setNewGroupDescription] = useState("");
-  const addGroup = useMutation("addGroup");
-  let body;
-  if (!user) {
-    body = <div>Loading...</div>;
-  } else {
-    async function handleCreateGroup(event: FormEvent) {
-      event.preventDefault();
-      addGroup(newGroupName, newGroupDescription, user._id)
-        .catch((e) => {
-          toast.error(`${e}`);
-        })
-        .then(() => {
-          setNewGroupName("");
-          setNewGroupDescription("");
-        });
-    }
-    body = (
-      <div>
-        <ListGroups userId={props.userId} />
-        <div className="channel-box">
-          <form
-            onSubmit={handleCreateGroup}
-            className="d-flex justify-content-center"
-          >
-            <input
-              value={newGroupName}
-              onChange={(event) => setNewGroupName(event.target.value)}
-              className="form-control w-50"
-              placeholder="Name of group"
-            />
-            <input
-              value={newGroupDescription}
-              onChange={(event) => setNewGroupDescription(event.target.value)}
-              className="form-control w-50"
-              placeholder="Describe the group..."
-            />
-            <input
-              type="submit"
-              value="Create Group"
-              className="ms-2 btn btn-primary"
-              disabled={!newGroupName || !newGroupDescription}
-            />
-          </form>
-          <ToastContainer />
-        </div>
-      </div>
-    );
-  }
-  return body;
-}
 function App() {
   // Check authentication
   // TODO make this a helper since we'll probably need it everywhere
