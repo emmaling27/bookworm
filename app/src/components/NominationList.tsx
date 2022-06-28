@@ -1,7 +1,7 @@
 import { List } from "@mui/material";
 import { Id } from "convex-dev/values";
 import { Nomination, Vote, VoteStatus } from "../model";
-import React from "react";
+import React, { SyntheticEvent } from "react";
 import {
   Checkbox,
   FormControlLabel,
@@ -44,9 +44,10 @@ export function Nomination(props: {
           control={<Checkbox />}
           label={nomination.book}
           checked={nomination.yesVote}
-          onChange={(event: React.ChangeEvent<HTMLInputElement>) =>
-            changeVote(nomination._id, event.target.checked, props.userId)
-          }
+          onChange={(
+            _event: SyntheticEvent<Element, Event>,
+            checked: boolean
+          ) => changeVote(nomination._id, checked, props.userId)}
         />
       ) : (
         <Typography marginRight=".5em">{nomination.book}</Typography>

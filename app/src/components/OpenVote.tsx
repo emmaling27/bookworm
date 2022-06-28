@@ -17,7 +17,9 @@ export function OpenVote(props: { userId: Id; groupId: Id }) {
     async function handleStartVote(event: FormEvent) {
       event.preventDefault();
       setNewVoteName("");
-      await startVote(newVoteName, user._id, props.groupId);
+      if (user) {
+        await startVote(newVoteName, user._id, props.groupId);
+      }
     }
     body = (
       <div>

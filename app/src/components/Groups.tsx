@@ -18,14 +18,16 @@ export function Groups(props: { userId: Id }) {
   } else {
     async function handleCreateGroup(event: FormEvent) {
       event.preventDefault();
-      addGroup(newGroupName, newGroupDescription, user._id)
-        .catch((e) => {
-          toast.error(`${e}`);
-        })
-        .then(() => {
-          setNewGroupName("");
-          setNewGroupDescription("");
-        });
+      if (user?._id) {
+        addGroup(newGroupName, newGroupDescription, user._id)
+          .catch((e) => {
+            toast.error(`${e}`);
+          })
+          .then(() => {
+            setNewGroupName("");
+            setNewGroupDescription("");
+          });
+      }
     }
     body = (
       <div>
