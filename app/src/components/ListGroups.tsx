@@ -7,18 +7,55 @@ import Typography from "@mui/material/Typography";
 import CardActions from "@mui/material/CardActions";
 import Button from "@mui/material/Button";
 
+function JoinOrLeaveButton(props: {
+  groupId: Id;
+  userId: Id;
+  inGroup: boolean;
+  requestPending: boolean;
+}) {
+  const addJoinRequest = useMutation("addJoinRequest");
+  const removeGroupMember = useMutation("removeGroupMember");
+  let buttonText;
+  if (props.inGroup) {
+    buttonText = "Leave";
+  } else if (props.requestPending) {
+    console.log("there's a request pending for ", props.groupId);
+
+    buttonText = "Request pending";
+  } else {
+    buttonText = "Request to join";
+  }
+  return (
+    <Button
+      size="small"
+      onClick={() => {
+        if (props.inGroup) {
+          removeGroupMember(props.groupId, props.userId);
+        } else if (!props.requestPending) {
+          addJoinRequest(props.userId, props.groupId);
+        }
+      }}
+      disabled={props.requestPending}
+    >
+      {buttonText}
+    </Button>
+  );
+}
+
 export function ListGroups(props: { userId: Id }) {
   let router = useRouter();
   if (!props.userId) {
     return <div></div>;
   }
   const groups = useQuery("listGroups") || [];
-  const addJoinRequest = useMutation("addJoinRequest");
-  const removeGroupMember = useMutation("removeGroupMember");
+  const requestPendingGroups =
+    useQuery("userJoinRequests", props.userId) || new Set();
+  console.log(requestPendingGroups);
   return (
     <div>
       {groups.map((g) => {
         const inGroup = g.members.has(props.userId.toString());
+        const requestPending = requestPendingGroups.has(g._id.toString());
         return (
           <Card key={g.name}>
             <CardContent>
@@ -30,18 +67,12 @@ export function ListGroups(props: { userId: Id }) {
             </CardContent>
             <CardActions>
               {" "}
-              <Button
-                size="small"
-                onClick={() => {
-                  if (inGroup) {
-                    removeGroupMember(g._id, props.userId);
-                  } else {
-                    addJoinRequest(props.userId, g._id);
-                  }
-                }}
-              >
-                {inGroup ? "Leave" : "Request to Join"}
-              </Button>
+              <JoinOrLeaveButton
+                groupId={g._id}
+                userId={props.userId}
+                inGroup={inGroup}
+                requestPending={requestPending}
+              />
               <Button
                 size="small"
                 onClick={() => {

@@ -20,6 +20,7 @@ import type removeGroupMember from "./removeGroupMember";
 import type sendMessage from "./sendMessage";
 import type startVoting from "./startVoting";
 import type storeUser from "./storeUser";
+import type userJoinRequests from "./userJoinRequests";
 
 // This jumpstarts TypeScript completion of the convex-dev/values entry point.
 import type { Id } from "convex-dev/values";
@@ -56,6 +57,7 @@ export type ConvexAPI = {
     listJoinRequests: ClientQuery<typeof listJoinRequests>;
     listNominations: ClientQuery<typeof listNominations>;
     nominationMessages: ClientQuery<typeof nominationMessages>;
+    userJoinRequests: ClientQuery<typeof userJoinRequests>;
   };
   mutations: {
     addGroup: ClientMutation<typeof addGroup>;
